@@ -7,31 +7,7 @@ load("sbbsdefs.js"); //load helper functions
 
 // SET DEFAULT VALUES FOR ERRATHANG
 
-// Load fontcode.ans from selected menu set directory, reset the font to 437 or amiga style.
-newMenu('fontcode'); // reset font type
-
-// TODO: check for DDmsg
-
-// test for menu in user.command_shell directory, if not found use mystique version.
-function newMenu(file) {
-	var menu_file = system.text_dir + '\menu\\' + user.command_shell + '\\' + file;
-	if (!file_exists(menu_file + '.ans') && !file_exists(menu_file + '.asc') ) {
-		bbs.menu('mystique\\'	+ file);
-	} else {
-		bbs.menu(user.command_shell + '\\' + file);
-}
-}
-
-// Get current shell code, to check later in case of settings change.
-var thisShell = user.command_shell;
-
-// TODO: lets maybe remember command history?
-var commandHistory = [];
-var commCount = 0;
-var histCount = 0;
-
 // set up default colors, if no theme settings.js file is found.
-
 var color = {
 	txt_menu	: '\1h\1b', // Menu name
 	txt_user 	: '\1h\1c', // username in menus 
@@ -50,19 +26,17 @@ var color = {
 	def_head 	: '\1h\1w'  // defaults header
 }
 
-var myst = {
+var conf = {
 	ddmsgread	: '',
-	dmnewscan	: ''
+	dmnewscan	: '',
+	rumorFile 	: system.mods_dir + '\\rumor.txt',
+	rumorHeader : 'rumors',
+	rumorFooter : 'footer',
 }
 
-// get custom colors from colors.js in theme directory.
-var settingsFile = system.text_dir + 'menu\\' + user.command_shell + '\\settings.js';
-
-if (file_exists(settingsFile)) {
-	load(settingsFile);
+var myst = {
+	param		: argv[0]	
 }
-
-js.on_exit('lastCaller()'); // generate last caller entry if disconnected
 
 // Setting up Activity Flags.
 var activity = new Object();
@@ -73,6 +47,40 @@ activity.readmg 	= '-';
 activity.hungup 	= 'H'; // setting to H now, if user logs out using menu, will change to '-'
 activity.isnewu 	= '-';
 activity.doors 		= '-';
+
+// get settings colors from settings.js in theme directory. overwrite defaults if found.
+
+var settingsFile = system.text_dir + 'menu\\' + user.command_shell + '\\settings.js';
+if (file_exists(settingsFile)) {
+	load(settingsFile);
+}
+
+
+// Load fontcode.ans from selected menu set directory, reset the font to 437 or amiga style.
+newMenu('fontcode'); // reset font type
+
+// test for menu in user.command_shell directory, if not found use mystique version.
+function newMenu(file) {
+	var menu_file = system.text_dir + '\menu\\' + user.command_shell + '\\' + file;
+	if (!file_exists(menu_file + '.ans') && !file_exists(menu_file + '.asc') ) {
+		bbs.menu('mystique\\'	+ file);
+	} else {
+		bbs.menu(user.command_shell + '\\' + file);
+}
+}
+
+// if calling rumor or automsg mods, rum them and skedaddle. 
+if (conf.param == 'addrumor') {
+	addRumor();
+	exit();
+}
+
+
+// Get current shell code, to check later in case of settings change.
+var thisShell = user.command_shell;
+
+js.on_exit('lastCaller()'); // generate last caller entry if disconnected
+
 
 // activity will be posted to last caller list by default
 var stealth = 'disabled';
@@ -169,7 +177,7 @@ function mainMenu() {
 				bbs.exec('*automsg');
 				break;
 			case 'R':
-				bbs.exec('*addrumor');
+				bbs.exec('?mystique.js addrumor');
 				break;
 				// SOME POPULAR 'HIDDEN' ITEMS (NOT ON MENU)	
 			case 'P':
@@ -269,16 +277,16 @@ function msgMenu() {
 				break;
 				// READ NEW MESSAGES IN CURRENT GROUP
 			case 'L':
-				if (myst.ddmsgread){
-				bbs.exec(myst.ddmsgread + ' -startMode=list');
+				if (conf.ddmsgread){
+				bbs.exec(conf.ddmsgread + ' -startMode=list');
 				} else {
 				bbs.scan_posts();
 				}
 				break;
 			case 'R':
 			case '\r':
-				if (myst.ddmsgread){
-				bbs.exec(myst.ddmsgread + ' -startMode=read');
+				if (conf.ddmsgread){
+				bbs.exec(conf.ddmsgread + ' -startMode=read');
 				} else {
 				bbs.scan_posts();
 				}
@@ -289,8 +297,8 @@ function msgMenu() {
 				break;
 				// SCAN FOR NEW MESSAGES
 			case 'N':
-				if (myst.ddmsgread){
-				bbs.exec(myst.ddmsgread + ' -search=new_msg_scan');
+				if (conf.ddmsgread){
+				bbs.exec(conf.ddmsgread + ' -search=new_msg_scan');
 				} else {
 				console.print("\r\nchNew Message Scan\r\n");
 				bbs.scan_subs(SCAN_NEW);
@@ -298,8 +306,8 @@ function msgMenu() {
 				break;
 				// SCAN FOR UNREAD MESSAGE TO USER
 			case 'S':
-				if (myst.ddmsgread){
-				bbs.exec(myst.ddmsgread + ' -startMode=read -search=to_user_new_scan');
+				if (conf.ddmsgread){
+				bbs.exec(conf.ddmsgread + ' -startMode=read -search=to_user_new_scan');
 				} else {
 				console.print("\r\nchScan for Messages Posted to You\r\n");
 				bbs.scan_subs(SCAN_TOYOU);
@@ -307,8 +315,8 @@ function msgMenu() {
 				break;
 				// CONF NEW MSG SCAN
 			case 'C':
-				if (myst.dmnewscan){
-				bbs.exec(myst.dmnewscan);
+				if (conf.dmnewscan){
+				bbs.exec(conf.dmnewscan);
 				} else {
 				bbs.cfg_msg_scan();
 				}
@@ -1424,7 +1432,7 @@ function colonMenu(option) {
 			break;
 		case 'RUMR':
 		case 'RUM':
-			addRumor();
+			bbs.exec('?mystique.js addrumor');
 			break;
 		case 'SCOR':
 			bbs.exec_xtrn('BULLSEYE');
@@ -1553,7 +1561,115 @@ console.printfile("../text/" + this.ansiDirectory + "/" + file_getname(random_li
 }
 }
 
+function addRumor() {
+	console.clear();
+	newMenu(conf.rumorHeader);
+	console.printtail(conf.rumorFile,10);
+	newMenu(conf.rumorFooter);
+	console.gotoxy(1,22);
+
+	//console.putmsg('\1h\1b<--------------------------------------------------------------\1k[\1mng \1b2016\1k]\1b------>\1n\1w');
+	
+	console.gotoxy(1,23);
+	console.putmsg('\1h\1b Enter new rumor [\1wRET\1b] quits:\1n');
+	console.gotoxy(1,24);
+	console.putmsg(':');
+	var rumor = console.getstr("", 77);
+	if (rumor == null || rumor == "" || rumor =="q" || rumor =="quit") return;
+	else customizeRumor(rumor);
+}
+
+function customizeRumor(rumor) {
+	
+	var fgarray = {1:"\1w",2:"\1y",3:"\1r",4:"\1h\1b",5:"\1g",6:"\1m",7:"\1h\1y",8:"\1h\1m"};
+	var bgarray = {10:"\0010",11:"\0016",12:"\0012",13:"\0015",14:"\0014",15:"\0013",16:"\0011"};
+	
+
+
+	var rumor = (rpad(rumor,78));
+	console.gotoxy(1,23);
+	
+	console.putmsg('\1h\1m Pimp Your Rumor: \1wUP\1b/\1wDOWN\1b: \1mFG  \1wLEFT\1b/\1wRIGHT\1b: \1mBG  \1b[\1wRET\1b] \1mAccept   \1w[\1wQ\1b] \1mQuit\1n');
+	console.gotoxy(1,24);
+	console.putmsg('\10\1n\1w[' + rumor + '\10\1n\1w]')
+	
+	var fg = 1;
+	var bg = 10;
+	
+	
+	var accepted = false;
+	
+	while (!accepted) {
+
+		switch(console.getkey(K_NOECHO).toUpperCase()) {
+		case KEY_UP:
+        case 'W':
+			if (fg == 8) fg = 1;
+			else fg = fg +1;
+			console.gotoxy(1,24);
+			console.clearline();
+			var styled = '\10\1n\1w[' + bgarray[bg] + fgarray[fg] + rumor + '\10\1n\1w]';
+			console.putmsg(styled);
+			break;
+		case KEY_DOWN:
+		case 'S': 
+			if (fg == 1) fg = 8;
+			else fg = fg -1;
+			console.gotoxy(1,24);
+			console.clearline();
+			var styled = '\10\1n\1w[' + bgarray[bg] + fgarray[fg] + rumor + '\10\1n\1w]';
+			console.putmsg(styled);
+            break;
+		case KEY_LEFT:
+        case 'A': 
+			if (bg == 10) bg = 16;
+			else bg = bg -1;
+			console.gotoxy(1,24);
+			console.clearline();
+			var styled = '\10\1n\1w[' + bgarray[bg] + fgarray[fg] + rumor + '\10\1n\1w]';
+			console.putmsg(styled);
+            break;
+		case KEY_RIGHT:
+        case 'D': 
+			if (bg == 16) bg = 10;
+			else bg = bg +1;
+			console.gotoxy(1,24);
+			console.clearline();
+			var styled = '\10\1n\1w[' + bgarray[bg] + fgarray[fg] + rumor + '\10\1n\1w]';
+			console.putmsg(styled);
+            break;
+		case 'Q':
+			accepted = true;
+			console.crlf();
+			console.pause();
+			break;
+		case "\r":
+			var styled = '\10\1n\1w[' + bgarray[bg] + fgarray[fg] + rumor + '\10\1n\1w]';
+				f = new File(conf.rumorFile)
+				if (!f.open("a")) {
+				alert("Error opening file: " + conf.rumorFile);
+				return;
+				}
+				f.writeln(styled);
+				f.close();
+			console.gotoxy(1,22);
+			console.clearline();
+			console.gotoxy(1,23);
+			console.clearline();
+			console.gotoxy(1,24);
+			console.clearline();
+			console.center('\1h\1rSaved. \1n\1w\r\n');
+			console.pause();
+			accepted = true;
+			break;
+		default:
+			break;
+		}
+	}
+}
+
 
 console.line_counter = 0;
 bbs.sys_status &= ~SS_ABORT; //clear ctrl-c/abort status
+
 mainMenu();
