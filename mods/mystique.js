@@ -30,30 +30,33 @@ var commandHistory = [];
 var commCount = 0;
 var histCount = 0;
 
-// set up default colors, if no theme file is found.
-
-// i should set these defaults up to make more default-synchronet like.
+// set up default colors, if no theme settings.js file is found.
 
 var color = {
-txt_menu	: '\1h\1b', // Menu name
-txt_user 	: '\1h\1c', // username in menus 
-txt_sym 	: '\1n\1b', // symbols color @, [ ], ( ),etc..
-txt_sym2 	: '\1h\1c', // symbol highlght (numbers in [1], menu options [A], etc..)
-txt_text 	: '\1h\1b', // color for most text
-txt_text2 	: '\1h\1m', // aux color for text, bold words, values, etc...
-txt_ques 	: '\1h\1y', // color for question prompts
-txt_alert 	: '\1h\1r', // color for alert text
-txt_success : '\1h\1g', // color for success text
-txt_info 	: '\1h\1c', // color for info text 
-def_text 	: '\1h\1b', // defaults option text
-def_value 	: '\1h\1c', // defaults current value
-def_on 		: '\1n\1c', // defaults 'on' color
-def_off 	: '\1n\1c', // defaults 'off' color
-def_head 	: '\1h\1w'  // defaults header
+	txt_menu	: '\1h\1b', // Menu name
+	txt_user 	: '\1h\1c', // username in menus 
+	txt_sym 	: '\1n\1b', // symbols color @, [ ], ( ),etc..
+	txt_sym2 	: '\1h\1c', // symbol highlght (numbers in [1], menu options [A], etc..)
+	txt_text 	: '\1h\1b', // color for most text
+	txt_text2 	: '\1h\1m', // aux color for text, bold words, values, etc...
+	txt_ques 	: '\1h\1y', // color for question prompts
+	txt_alert 	: '\1h\1r', // color for alert text
+	txt_success : '\1h\1g', // color for success text
+	txt_info 	: '\1h\1c', // color for info text 
+	def_text 	: '\1h\1b', // defaults option text
+	def_value 	: '\1h\1c', // defaults current value
+	def_on 		: '\1n\1c', // defaults 'on' color
+	def_off 	: '\1n\1c', // defaults 'off' color
+	def_head 	: '\1h\1w'  // defaults header
+}
+
+var myst = {
+	ddmsgread	: '',
+	dmnewscan	: ''
 }
 
 // get custom colors from colors.js in theme directory.
-var settingsFile = system.text_dir + 'menu\\' + user.command_shell + '\\colors.js';
+var settingsFile = system.text_dir + 'menu\\' + user.command_shell + '\\settings.js';
 
 if (file_exists(settingsFile)) {
 	load(settingsFile);
@@ -262,14 +265,23 @@ function msgMenu() {
 				// SELECT GROUPS/SUBS
 			case 'G':
 			case 'J':
-				bbs.exec('*DDMsgAreaChooser.js');
+				bbs.exec('?DDMsgAreaChooser.js');
 				break;
 				// READ NEW MESSAGES IN CURRENT GROUP
 			case 'L':
-				bbs.exec('?../xtrn/DDMsgReader/DDMsgReader.js -startMode=list');			
+				if (myst.ddmsgread){
+				bbs.exec(myst.ddmsgread + ' -startMode=list');
+				} else {
+				bbs.scan_posts();
+				}
+				break;
 			case 'R':
 			case '\r':
-				bbs.exec('?../xtrn/DDMsgReader/DDMsgReader.js -startMode=read');
+				if (myst.ddmsgread){
+				bbs.exec(myst.ddmsgread + ' -startMode=read');
+				} else {
+				bbs.scan_posts();
+				}
 				break;
 				// POST NEW MESSAGE IN CURRENT GROUP
 			case 'P':
@@ -277,16 +289,29 @@ function msgMenu() {
 				break;
 				// SCAN FOR NEW MESSAGES
 			case 'N':
-				bbs.exec('?../xtrn/DDMsgReader/DDMsgReader.js -search=new_msg_scan');
+				if (myst.ddmsgread){
+				bbs.exec(myst.ddmsgread + ' -search=new_msg_scan');
+				} else {
+				console.print("\r\nchNew Message Scan\r\n");
+				bbs.scan_subs(SCAN_NEW);
+				}
 				break;
 				// SCAN FOR UNREAD MESSAGE TO USER
 			case 'S':
-				bbs.exec('?../xtrn/DDMsgReader/DDMsgReader.js -startMode=read -search=to_user_new_scan');
+				if (myst.ddmsgread){
+				bbs.exec(myst.ddmsgread + ' -startMode=read -search=to_user_new_scan');
+				} else {
+				console.print("\r\nchScan for Messages Posted to You\r\n");
+				bbs.scan_subs(SCAN_TOYOU);
+				}
 				break;
 				// CONF NEW MSG SCAN
 			case 'C':
-				//				bbs.cfg_msg_scan();
-				bbs.exec('?DM_NewScanConfig.js');
+				if (myst.dmnewscan){
+				bbs.exec(myst.dmnewscan);
+				} else {
+				bbs.cfg_msg_scan();
+				}
 				break;
 				// FIND TEXT IN POSTS
 			case 'F':
