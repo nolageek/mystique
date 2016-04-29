@@ -10,7 +10,7 @@ load("sbbsdefs.js"); //load helper functions
 // Load fontcode.ans from selected menu set directory, reset the font to 437 or amiga style.
 newMenu('fontcode'); // reset font type
 
-// check for DDmsg
+// TODO: check for DDmsg
 
 // test for menu in user.command_shell directory, if not found use mystique version.
 function newMenu(file) {
@@ -24,6 +24,11 @@ function newMenu(file) {
 
 // Get current shell code, to check later in case of settings change.
 var thisShell = user.command_shell;
+
+// TODO: lets maybe remember command history?
+var commandHistory = [];
+var commCount = 0;
+var histCount = 0;
 
 // set up default colors, if no theme file is found.
 
@@ -335,7 +340,7 @@ function systemMenu() {
 			case 'U':
 				//console.clear();
 				//console.line_counter = 1;
-				randomANSI('menu\\' + user.command_shell, 'header');
+				newMenu('userlist');
 				//bbs.menu(user.command_shell + '\\header');
 				bbs.list_users();
 				console.line_counter = 1;
@@ -402,6 +407,14 @@ function chatMenu() {
 			switch (key) {
 			case 'M':
 				bbs.exec('*chat_sec');
+				break;
+			case 'F':
+				console.crlf();
+				bbs.exec('?finger');
+				break;
+			case 'I':
+				console.crlf();
+				bbs.exec('?sbbsimsg.js');
 				break;
 			case 'J':
 				bbs.multinode_chat();
@@ -1459,7 +1472,7 @@ function showLastCallers(int) {
 	f = new File(lastcallers);
 	newMenu('last10h');
 	console.printtail(lastcallers, int);
-	newMenu('last10f');
+	newMenu('footer');
 }
 
 /*****************************************************************
