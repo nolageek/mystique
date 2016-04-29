@@ -16,9 +16,13 @@ var color = {
 	def_head 	: '\1h\1w'  // defaults header
 }
 
-var myst = {
+var conf = {
 //	ddmsgread	: '?../xtrn/DDMsgReader/DDMsgReader.js', // command for DDMsgReader if installed
 	ddmsgread	: '',
 //	dmnewscan	: '?DM_NewScanConfig.js' // command for DM_NewScanConfig if installed
-	dmnewscan	: ''
+	dmnewscan	: '',
+	rumorFile 	: system.mods_dir + '\\rumor.txt',
+	rumorHeader : 'rumors',
+	rumorFooter : 'footer',
+	param		: argv[0]
 }
