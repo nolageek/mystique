@@ -5,13 +5,9 @@ This is still very much in development. You can see it in action on my BBS, capi
 
 I'm writing this synchronet shell since I couldn't find a simple one that was written in js - they're mostly in BAJA and that prevented a lot of what I wanted to do. I'm pulling a lot of inspiration from various other BBS software.
 
-NOTE: I am *not supporting* it in any way and it's for my own usage. Due to the specific setup of my BBS I would not recommend using this on your board unless you want to hack it up:
+NOTE: At this time I am *not supporting* this shell in any way and I would not recommend using this on your board.
 
-* Mystique requires DDMsgReader, DDAreaLister mods or it will throw errors.
-* It also requires some external files that I plan on merging with the central one. I want it to be the one.
-* At the moment there is no file transfer section since my BBS doesn't use one.
-
-I plan on making it more generic in the near future.
+I am working on making it more generic so others can use it.
 
 
 
