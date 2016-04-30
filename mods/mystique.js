@@ -71,54 +71,7 @@ function newMenu(file) {
 }
 
 // if calling rumor or automsg mods, rum them and skedaddle. 
-if (conf.param == 'addrumor') {
-	addRumor();
-	exit();
-}
-
-
-// Get current shell code, to check later in case of settings change.
-var thisShell = user.command_shell;
-
-js.on_exit('lastCaller()'); // generate last caller entry if disconnected
-
-=======
-}
-
-// Setting up Activity Flags.
-var activity = new Object();
-activity.posted 	= '-';
-activity.gfiles 	= '-';
-activity.fsysop 	= '-';
-activity.readmg 	= '-';
-activity.hungup 	= 'H'; // setting to H now, if user logs out using menu, will change to '-'
-activity.isnewu 	= '-';
-activity.doors 		= '-';
->>>>>>> origin/master
-
-// get settings colors from settings.js in theme directory. overwrite defaults if found.
-
-var settingsFile = system.text_dir + 'menu\\' + user.command_shell + '\\settings.js';
-if (file_exists(settingsFile)) {
-	load(settingsFile);
-}
-
-
-// Load fontcode.ans from selected menu set directory, reset the font to 437 or amiga style.
-newMenu('fontcode'); // reset font type
-
-// test for menu in user.command_shell directory, if not found use mystique version.
-function newMenu(file) {
-	var menu_file = system.text_dir + '\menu\\' + user.command_shell + '\\' + file;
-	if (!file_exists(menu_file + '.ans') && !file_exists(menu_file + '.asc') ) {
-		bbs.menu('mystique\\'	+ file);
-	} else {
-		bbs.menu(user.command_shell + '\\' + file);
-}
-}
-
-// if calling rumor or automsg mods, rum them and skedaddle. 
-if (conf.param == 'addrumor') {
+if (myst.param == 'addrumor') {
 	addRumor();
 	exit();
 }
@@ -324,26 +277,16 @@ function msgMenu() {
 				break;
 				// READ NEW MESSAGES IN CURRENT GROUP
 			case 'L':
-<<<<<<< HEAD
 				if (conf.ddmsgread) {
 					bbs.exec(conf.ddmsgread + ' -startMode=list');
-=======
-				if (conf.ddmsgread){
-				bbs.exec(conf.ddmsgread + ' -startMode=list');
->>>>>>> origin/master
 				} else {
 					bbs.scan_posts();
 				}
 				break;
 			case 'R':
 			case '\r':
-<<<<<<< HEAD
 				if (conf.ddmsgread) {
 					bbs.exec(conf.ddmsgread + ' -startMode=read');
-=======
-				if (conf.ddmsgread){
-				bbs.exec(conf.ddmsgread + ' -startMode=read');
->>>>>>> origin/master
 				} else {
 					bbs.scan_posts();
 				}
@@ -354,13 +297,8 @@ function msgMenu() {
 				break;
 				// SCAN FOR NEW MESSAGES
 			case 'N':
-<<<<<<< HEAD
 				if (conf.ddmsgread) {
 					bbs.exec(conf.ddmsgread + ' -search=new_msg_scan');
-=======
-				if (conf.ddmsgread){
-				bbs.exec(conf.ddmsgread + ' -search=new_msg_scan');
->>>>>>> origin/master
 				} else {
 					console.print("\r\nchNew Message Scan\r\n");
 					bbs.scan_subs(SCAN_NEW);
@@ -368,13 +306,8 @@ function msgMenu() {
 				break;
 				// SCAN FOR UNREAD MESSAGE TO USER
 			case 'S':
-<<<<<<< HEAD
 				if (conf.ddmsgread) {
 					bbs.exec(conf.ddmsgread + ' -startMode=read -search=to_user_new_scan');
-=======
-				if (conf.ddmsgread){
-				bbs.exec(conf.ddmsgread + ' -startMode=read -search=to_user_new_scan');
->>>>>>> origin/master
 				} else {
 					console.print("\r\nchScan for Messages Posted to You\r\n");
 					bbs.scan_subs(SCAN_TOYOU);
@@ -382,13 +315,8 @@ function msgMenu() {
 				break;
 				// CONF NEW MSG SCAN
 			case 'C':
-<<<<<<< HEAD
 				if (conf.dmnewscan) {
 					bbs.exec(conf.dmnewscan);
-=======
-				if (conf.dmnewscan){
-				bbs.exec(conf.dmnewscan);
->>>>>>> origin/master
 				} else {
 					bbs.cfg_msg_scan();
 				}
