@@ -26,17 +26,16 @@ var color = {
 	def_head 	: '\1h\1w'  // defaults header
 }
 
+
 var conf = {
-	ddmsgread	: '',
-	dmnewscan	: '',
 	rumorFile 	: system.mods_dir + '\\rumor.txt',
 	rumorHeader : 'rumors',
 	rumorFooter : 'footer',
 }
 
 var myst = {
-	param		: argv[0]	
-}
+	param		: argv[0]
+	}
 
 // Setting up Activity Flags.
 var activity = {
@@ -277,19 +276,16 @@ function msgMenu() {
 				break;
 				// READ NEW MESSAGES IN CURRENT GROUP
 			case 'L':
-				if (conf.ddmsgread) {
-					bbs.exec(conf.ddmsgread + ' -startMode=list');
+				if (file_exists('../xtrn/DDMsgReader/DDMsgReader.js')) {
+					bbs.exec('?../xtrn/DDMsgReader/DDMsgReader.js -startMode=list');
 				} else {
-					bbs.scan_posts();
+					bbs.list_msgs();
 				}
 				break;
 			case 'R':
 			case '\r':
-				if (conf.ddmsgread) {
-					bbs.exec(conf.ddmsgread + ' -startMode=read');
-				} else {
-					bbs.scan_posts();
-				}
+				// will use DDMesgReader if installed as Loadable module
+				bbs.scan_posts();
 				break;
 				// POST NEW MESSAGE IN CURRENT GROUP
 			case 'P':
@@ -297,26 +293,20 @@ function msgMenu() {
 				break;
 				// SCAN FOR NEW MESSAGES
 			case 'N':
-				if (conf.ddmsgread) {
-					bbs.exec(conf.ddmsgread + ' -search=new_msg_scan');
-				} else {
-					console.print("\r\nchNew Message Scan\r\n");
-					bbs.scan_subs(SCAN_NEW);
-				}
+				// will use DDMesgReader if installed as Loadable module
+				console.print("\r\nchNew Message Scan\r\n");
+				bbs.scan_subs(SCAN_NEW);
 				break;
 				// SCAN FOR UNREAD MESSAGE TO USER
 			case 'S':
-				if (conf.ddmsgread) {
-					bbs.exec(conf.ddmsgread + ' -startMode=read -search=to_user_new_scan');
-				} else {
-					console.print("\r\nchScan for Messages Posted to You\r\n");
-					bbs.scan_subs(SCAN_TOYOU);
-				}
+				// will use DDMesgReader if installed as Loadable module
+				console.print("\r\nchScan for Messages Posted to You\r\n");
+				bbs.scan_subs(SCAN_TOYOU);
 				break;
 				// CONF NEW MSG SCAN
 			case 'C':
-				if (conf.dmnewscan) {
-					bbs.exec(conf.dmnewscan);
+			if (file_exists(system.mods_dir + '\\DM_NewScanConfig.js')) {
+					bbs.exec('?DM_NewScanConfig.js');
 				} else {
 					bbs.cfg_msg_scan();
 				}
