@@ -17,7 +17,7 @@ var color = {
 	txt_text2 	: '\1h\1m', // aux color for text, bold words, values, etc...
 	txt_ques 	: '\1h\1y', // color for question prompts
 	txt_alert 	: '\1h\1r', // color for alert text
-	txt_success : '\1h\1g', // color for success text
+	txt_success	: '\1h\1g', // color for success text
 	txt_info 	: '\1h\1c', // color for info text 
 	def_text 	: '\1h\1b', // defaults option text
 	def_value 	: '\1h\1c', // defaults current value
@@ -26,27 +26,27 @@ var color = {
 	def_head 	: '\1h\1w'  // defaults header
 }
 
+
 var conf = {
-	ddmsgread	: '',
-	dmnewscan	: '',
 	rumorFile 	: system.mods_dir + '\\rumor.txt',
 	rumorHeader : 'rumors',
 	rumorFooter : 'footer',
 }
 
 var myst = {
-	param		: argv[0]	
-}
+	param		: argv[0]
+	}
 
 // Setting up Activity Flags.
-var activity = new Object();
-activity.posted 	= '-';
-activity.gfiles 	= '-';
-activity.fsysop 	= '-';
-activity.readmg 	= '-';
-activity.hungup 	= 'H'; // setting to H now, if user logs out using menu, will change to '-'
-activity.isnewu 	= '-';
-activity.doors 		= '-';
+var activity = {
+	posted		: '-',
+	gfiles		: '-',
+	fsysop		: '-',
+	readmg		: '-',
+	hungup		: 'H', // setting to H now, if user logs out using menu, will change to '-'
+	isnewu		: '-',
+	doors		: '-'
+}
 
 // get settings colors from settings.js in theme directory. overwrite defaults if found.
 
@@ -62,15 +62,15 @@ newMenu('fontcode'); // reset font type
 // test for menu in user.command_shell directory, if not found use mystique version.
 function newMenu(file) {
 	var menu_file = system.text_dir + '\menu\\' + user.command_shell + '\\' + file;
-	if (!file_exists(menu_file + '.ans') && !file_exists(menu_file + '.asc') ) {
-		bbs.menu('mystique\\'	+ file);
+	if (!file_exists(menu_file + '.ans') && !file_exists(menu_file + '.asc')) {
+		bbs.menu('mystique\\' + file);
 	} else {
 		bbs.menu(user.command_shell + '\\' + file);
-}
+	}
 }
 
 // if calling rumor or automsg mods, rum them and skedaddle. 
-if (conf.param == 'addrumor') {
+if (myst.param == 'addrumor') {
 	addRumor();
 	exit();
 }
@@ -128,23 +128,23 @@ function filemenu() {
 }
 
 function mainMenu() {
-		while (bbs.online) {
-			//check to see if the user has changed command shell.
-			if (thisShell.toUpperCase() != user.command_shell.toUpperCase()) {
-				return;
-			}
-			bbs.node_action = NODE_MAIN;
-			bbs.nodesync();
-			console.clear();
-			newMenu('fontcode'); // reset font type
-			newMenu('main');
-			console.putmsg(color.txt_user + user.alias + color.txt_sym + '@' + color.txt_menu + 'Main Menu' + color.txt_sym + ':\1n');
+	while (bbs.online) {
+		//check to see if the user has changed command shell.
+		if (thisShell.toUpperCase() != user.command_shell.toUpperCase()) {
+			return;
+		}
+		bbs.node_action = NODE_MAIN;
+		bbs.nodesync();
+		console.clear();
+		newMenu('fontcode'); // reset font type
+		newMenu('main');
+		console.putmsg(color.txt_user + user.alias + color.txt_sym + '@' + color.txt_menu + 'Main Menu' + color.txt_sym + ':\1n');
 
-			//options and commands to perform
-			var key = console.getkey(K_NOECHO).toUpperCase();
-			bbs.log_key(key);
-			switch (key) {
-				// MAIN OPTIONS
+		//options and commands to perform
+		var key = console.getkey(K_NOECHO).toUpperCase();
+		bbs.log_key(key);
+		switch (key) {
+			// MAIN OPTIONS
 			case 'M':
 				msgMenu();
 				break;
@@ -226,26 +226,25 @@ function mainMenu() {
 				// FALL BACK
 			default:
 				break;
-			} // end switch
-		} // while online
-		//lastCaller(); // Generate Last Caller entry if user hangs up.
-	} // end main
+		} // end switch
+	} // while online
+} // end main
 
 function msgMenu() {
-		while (bbs.online) {
-			bbs.node_action = NODE_RMSG;
-			bbs.nodesync();
-			console.clear();
-			newMenu('fontcode');
-			newMenu('message');
-			console.putmsg(color.txt_sym + '[' + color.txt_sym2 + '@GN@' + color.txt_sym + '] ' + color.txt_user + '@GRP@' + color.txt_sym + ' [' + color.txt_sym2 + '@SN@' + color.txt_sym + '] ' + color.txt_menu + '@SUB@\1n');
-			console.crlf();
-			console.putmsg(color.txt_user + user.alias + color.txt_sym + '@' + color.txt_menu + 'Message Menu' + color.txt_sym + ':\1n');
+	while (bbs.online) {
+		bbs.node_action = NODE_RMSG;
+		bbs.nodesync();
+		console.clear();
+		newMenu('fontcode');
+		newMenu('message');
+		console.putmsg(color.txt_sym + '[' + color.txt_sym2 + '@GN@' + color.txt_sym + '] ' + color.txt_user + '@GRP@' + color.txt_sym + ' [' + color.txt_sym2 + '@SN@' + color.txt_sym + '] ' + color.txt_menu + '@SUB@\1n');
+		console.crlf();
+		console.putmsg(color.txt_user + user.alias + color.txt_sym + '@' + color.txt_menu + 'Message Menu' + color.txt_sym + ':\1n');
 
-			var key = console.getkey(K_NOECHO).toUpperCase();
-			bbs.log_key(key);
-			switch (key) {
-				// NAVIGATE GROUPS/SUBS
+		var key = console.getkey(K_NOECHO).toUpperCase();
+		bbs.log_key(key);
+		switch (key) {
+			// NAVIGATE GROUPS/SUBS
 			case '}':
 			case KEY_UP:
 				bbs.lastgrp = bbs.curgrp;
@@ -277,19 +276,16 @@ function msgMenu() {
 				break;
 				// READ NEW MESSAGES IN CURRENT GROUP
 			case 'L':
-				if (conf.ddmsgread){
-				bbs.exec(conf.ddmsgread + ' -startMode=list');
+				if (file_exists('../xtrn/DDMsgReader/DDMsgReader.js')) {
+					bbs.exec('?../xtrn/DDMsgReader/DDMsgReader.js -startMode=list');
 				} else {
-				bbs.scan_posts();
+					bbs.list_msgs();
 				}
 				break;
 			case 'R':
 			case '\r':
-				if (conf.ddmsgread){
-				bbs.exec(conf.ddmsgread + ' -startMode=read');
-				} else {
+				// will use DDMesgReader if installed as Loadable module
 				bbs.scan_posts();
-				}
 				break;
 				// POST NEW MESSAGE IN CURRENT GROUP
 			case 'P':
@@ -297,28 +293,22 @@ function msgMenu() {
 				break;
 				// SCAN FOR NEW MESSAGES
 			case 'N':
-				if (conf.ddmsgread){
-				bbs.exec(conf.ddmsgread + ' -search=new_msg_scan');
-				} else {
+				// will use DDMesgReader if installed as Loadable module
 				console.print("\r\nchNew Message Scan\r\n");
 				bbs.scan_subs(SCAN_NEW);
-				}
 				break;
 				// SCAN FOR UNREAD MESSAGE TO USER
 			case 'S':
-				if (conf.ddmsgread){
-				bbs.exec(conf.ddmsgread + ' -startMode=read -search=to_user_new_scan');
-				} else {
+				// will use DDMesgReader if installed as Loadable module
 				console.print("\r\nchScan for Messages Posted to You\r\n");
 				bbs.scan_subs(SCAN_TOYOU);
-				}
 				break;
 				// CONF NEW MSG SCAN
 			case 'C':
-				if (conf.dmnewscan){
-				bbs.exec(conf.dmnewscan);
+			if (file_exists(system.mods_dir + '\\DM_NewScanConfig.js')) {
+					bbs.exec('?DM_NewScanConfig.js');
 				} else {
-				bbs.cfg_msg_scan();
+					bbs.cfg_msg_scan();
 				}
 				break;
 				// FIND TEXT IN POSTS
@@ -345,27 +335,27 @@ function msgMenu() {
 				// FALL THROUGH
 			default:
 				break;
-			} // end switch
-		} // while online
-		return; // RETURN TO MAIN (to have last caller processed if user hangs up)
-	} // end message
+		} // end switch
+	} // while online
+	return; // RETURN TO MAIN (to have last caller processed if user hangs up)
+} // end message
 
 function systemMenu() {
-		while (bbs.online) {
-			if (thisShell.toUpperCase() != user.command_shell.toUpperCase()) {
-				return;
-			}
-			bbs.node_action = NODE_DFLT;
-			bbs.nodesync();
-			console.clear();
-			newMenu('fontcode');
-			newMenu('system');
-			console.putmsg(color.txt_user + user.alias + color.txt_sym + '@' + color.txt_menu + 'System Menu' + color.txt_sym + ':\1n');
+	while (bbs.online) {
+		if (thisShell.toUpperCase() != user.command_shell.toUpperCase()) {
+			return;
+		}
+		bbs.node_action = NODE_DFLT;
+		bbs.nodesync();
+		console.clear();
+		newMenu('fontcode');
+		newMenu('system');
+		console.putmsg(color.txt_user + user.alias + color.txt_sym + '@' + color.txt_menu + 'System Menu' + color.txt_sym + ':\1n');
 
-			var key = console.getkey(K_NOECHO).toUpperCase();
-			bbs.log_key(key);
-			switch (key) {
-				//options and commands to perform
+		var key = console.getkey(K_NOECHO).toUpperCase();
+		bbs.log_key(key);
+		switch (key) {
+			//options and commands to perform
 			case 'S':
 				console.clear();
 				bbs.sys_info();
@@ -420,24 +410,24 @@ function systemMenu() {
 				return;
 			default:
 				break;
-			} // end switch
-		} // while online
-		return; // RETURN TO MAIN (to have last caller processed if user hangs up)
-	} // end system
+		} // end switch
+	} // while online
+	return; // RETURN TO MAIN (to have last caller processed if user hangs up)
+} // end system
 
 function chatMenu() {
-		while (bbs.online) {
-			if (thisShell.toUpperCase() != user.command_shell.toUpperCase()) {
-				return;
-			}
-			bbs.node_action = NODE_CHAT;
-			bbs.nodesync()
-			console.clear();
-			newMenu('chat');
-			console.putmsg(color.txt_user + user.alias + color.txt_sym + '@' + color.txt_menu + 'Chat Menu' + color.txt_sym + ':\1n');
-			var key = console.getkey(K_NOECHO).toUpperCase();
-			bbs.log_key(key);
-			switch (key) {
+	while (bbs.online) {
+		if (thisShell.toUpperCase() != user.command_shell.toUpperCase()) {
+			return;
+		}
+		bbs.node_action = NODE_CHAT;
+		bbs.nodesync()
+		console.clear();
+		newMenu('chat');
+		console.putmsg(color.txt_user + user.alias + color.txt_sym + '@' + color.txt_menu + 'Chat Menu' + color.txt_sym + ':\1n');
+		var key = console.getkey(K_NOECHO).toUpperCase();
+		bbs.log_key(key);
+		switch (key) {
 			case 'M':
 				bbs.exec('*chat_sec');
 				break;
@@ -515,25 +505,25 @@ function chatMenu() {
 			case '\r':
 				return;
 
-			} // end switch
-		} // while online
-		return; // RETURN TO MAIN (to have last caller processed if user hangs up)
-	} // end chat
+		} // end switch
+	} // while online
+	return; // RETURN TO MAIN (to have last caller processed if user hangs up)
+} // end chat
 
 function emailMenu() {
-		while (bbs.online) {
-			if (thisShell.toUpperCase() != user.command_shell.toUpperCase()) {
-				return;
-			}
-			bbs.node_action = NODE_RMAL;
-			bbs.nodesync();
-			console.clear();
-			newMenu('email');
-			console.putmsg(color.txt_user + user.alias + color.txt_sym + '@' + color.txt_menu + 'Email Menu' + color.txt_sym + ':\1n');
-			//options and commands to perform
-			var key = console.getkey(K_NOECHO).toUpperCase();
-			bbs.log_key(key);
-			switch (key) {
+	while (bbs.online) {
+		if (thisShell.toUpperCase() != user.command_shell.toUpperCase()) {
+			return;
+		}
+		bbs.node_action = NODE_RMAL;
+		bbs.nodesync();
+		console.clear();
+		newMenu('email');
+		console.putmsg(color.txt_user + user.alias + color.txt_sym + '@' + color.txt_menu + 'Email Menu' + color.txt_sym + ':\1n');
+		//options and commands to perform
+		var key = console.getkey(K_NOECHO).toUpperCase();
+		bbs.log_key(key);
+		switch (key) {
 			case 'R':
 				bbs.exec('?../xtrn/DDMsgReader/DDMsgReader.js -personalEmail -startMode=list');
 				break;
@@ -541,17 +531,17 @@ function emailMenu() {
 				bbs.node_action = NODE_SMAL;
 				bbs.nodesync();
 				console.print("_\r\nbhE-mail (User name or number): w");
-				str=console.getstr("",40,K_UPRLWR,false);
-				if(str==null || str=="")
+				str = console.getstr("", 40, K_UPRLWR, false);
+				if (str == null || str == "")
 					break;
-				if(str=="Sysop")
-					str="1";
-				if(str.search(/\@/)!=-1)
+				if (str == "Sysop")
+					str = "1";
+				if (str.search(/\@/) != -1)
 					bbs.netmail(str);
 				else {
-					i=bbs.finduser(str);
-					if(i>0)
-						bbs.email(i,WM_EMAIL);
+					i = bbs.finduser(str);
+					if (i > 0)
+						bbs.email(i, WM_EMAIL);
 				}
 				break;
 			case 'O':
@@ -576,10 +566,10 @@ function emailMenu() {
 				break;
 			default:
 				break;
-			} // end switch
-		} //end while
-		return; // RETURN TO MAIN (to have last caller processed if user hangs up)
-	} //end mail
+		} // end switch
+	} //end while
+	return; // RETURN TO MAIN (to have last caller processed if user hangs up)
+} //end mail
 
 
 
@@ -593,7 +583,6 @@ function defaults() {
 		return;
 	}
 	var defPage = '1';
-//	var defpage = '1';
 while (bbs.online) {
 	
 	
@@ -936,11 +925,6 @@ while (bbs.online) {
 			} // end switch
 	}		
 	}
-
-
-//	bbs.node_action = NODE_DFLT;
-//	bbs.nodesync();
-//	bbs.user_config();
 	return;
 }
 

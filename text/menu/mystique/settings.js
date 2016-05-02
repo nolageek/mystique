@@ -17,12 +17,7 @@ var color = {
 }
 
 var conf = {
-//	ddmsgread	: '?../xtrn/DDMsgReader/DDMsgReader.js', // command for DDMsgReader if installed
-	ddmsgread	: '',
-//	dmnewscan	: '?DM_NewScanConfig.js' // command for DM_NewScanConfig if installed
-	dmnewscan	: '',
 	rumorFile 	: system.mods_dir + '\\rumor.txt',
 	rumorHeader : 'rumors',
 	rumorFooter : 'footer',
-	param		: argv[0]
 }
