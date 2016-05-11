@@ -26,13 +26,21 @@ var color = {
 	def_head 	: '\1h\1w'  // defaults header
 }
 
-
+// These are the user configurable options (from settings.js in theme directory)
 var conf = {
 	rumorFile 	: system.mods_dir + '\\rumor.txt',
-	rumorHeader : 'rumors',
-	rumorFooter : 'footer',
+	rumorHeader	: 'rumors',
+	rumorFooter	: 'footer',
+	amsgFile	: system.mods_dir + '\\automsg.txt',
+	amsgGreetz	: '@RIGHT:30@\1h\1mg \1n\1mr e e t z \1hf \1n\1mr o m\1w: \1h\1c-\1n\1c',
+	amsgPrefix	: '@RIGHT:10@\1h\1b',
+	amsgHeader	: 'automsg-h',
+	amsgFooter	: 'automsg-f',
+	fontcode	: '437'
 }
 
+
+//  Non-configurable options
 var myst = {
 	param		: argv[0]
 	}
@@ -57,10 +65,11 @@ if (file_exists(settingsFile)) {
 
 
 // Load fontcode.ans from selected menu set directory, reset the font to 437 or amiga style.
-newMenu('fontcode'); // reset font type
+mystMenu(conf.fontcode); // reset font type
+
 
 // test for menu in user.command_shell directory, if not found use mystique version.
-function newMenu(file) {
+function mystMenu(file) {
 	var menu_file = system.text_dir + '\menu\\' + user.command_shell + '\\' + file;
 	if (!file_exists(menu_file + '.ans') && !file_exists(menu_file + '.asc')) {
 		bbs.menu('mystique\\' + file);
@@ -72,6 +81,9 @@ function newMenu(file) {
 // if calling rumor or automsg mods, rum them and skedaddle. 
 if (myst.param == 'addrumor') {
 	addRumor();
+	exit();
+} else if (myst.param == 'automsg') {
+	autoMsg();
 	exit();
 }
 
@@ -136,8 +148,8 @@ function mainMenu() {
 		bbs.node_action = NODE_MAIN;
 		bbs.nodesync();
 		console.clear();
-		newMenu('fontcode'); // reset font type
-		newMenu('main');
+		mystMenu(conf.fontcode); // reset font type
+		mystMenu('main');
 		console.putmsg(color.txt_user + user.alias + color.txt_sym + '@' + color.txt_menu + 'Main Menu' + color.txt_sym + ':\1n');
 
 		//options and commands to perform
@@ -152,7 +164,6 @@ function mainMenu() {
 				emailMenu();
 				break;
 			case 'C':
-				//bbs.exec('*chat_sec');
 				chatMenu();
 				break;
 			case 'T':
@@ -174,10 +185,10 @@ function mainMenu() {
 				bbs.qwk_sec();
 				break;
 			case 'A':
-				bbs.exec('*automsg');
+				autoMsg();
 				break;
 			case 'R':
-				bbs.exec('?mystique.js addrumor');
+				addRumor();
 				break;
 				// SOME POPULAR 'HIDDEN' ITEMS (NOT ON MENU)	
 			case 'P':
@@ -188,8 +199,7 @@ function mainMenu() {
 				filemenu();
 				break;
 			case 'W':
-				newMenu('nodeltop');
-				//bbs.menu(user.command_shell + '\\nodeltop');
+				mystMenu('nodeltop');
 				break;
 			case 'L':
 				console.crlf();
@@ -199,13 +209,11 @@ function mainMenu() {
 				var num = console.getnum(100, 10);
 				showLastCallers(num);
 				break;
-				// SLASH MENU
-			case '/':
+			case '/': // SLASH MENU
 				console.putmsg('/');
 				slashMenu(console.getkeys('?DXO').toUpperCase());
 				break;
-				// SYSOP MENU
-			case ';':
+			case ';': // SYSOP MENU
 			case '.':
 				console.crlf();
 				if (user.compare_ars('SYSOP')) {
@@ -214,17 +222,14 @@ function mainMenu() {
 					break;
 				}
 				break;
-				// GLOBAL COLON MENU
-			case ':':
+			case ':': // GLOBAL COLON MENU
 				console.putmsg(':');
 				colonMenu(console.getstr('', 4).toUpperCase());
 				break;
-				// LOGOFF
-			case 'O':
+			case 'O': // LOGOFF
 				logOff();
 				break;
-				// FALL BACK
-			default:
+			default: // FALL BACK
 				break;
 		} // end switch
 	} // while online
@@ -235,8 +240,8 @@ function msgMenu() {
 		bbs.node_action = NODE_RMSG;
 		bbs.nodesync();
 		console.clear();
-		newMenu('fontcode');
-		newMenu('message');
+		mystMenu(conf.fontcode);
+		mystMenu('message');
 		console.putmsg(color.txt_sym + '[' + color.txt_sym2 + '@GN@' + color.txt_sym + '] ' + color.txt_user + '@GRP@' + color.txt_sym + ' [' + color.txt_sym2 + '@SN@' + color.txt_sym + '] ' + color.txt_menu + '@SUB@\1n');
 		console.crlf();
 		console.putmsg(color.txt_user + user.alias + color.txt_sym + '@' + color.txt_menu + 'Message Menu' + color.txt_sym + ':\1n');
@@ -348,8 +353,8 @@ function systemMenu() {
 		bbs.node_action = NODE_DFLT;
 		bbs.nodesync();
 		console.clear();
-		newMenu('fontcode');
-		newMenu('system');
+		mystMenu(conf.fontcode);
+		mystMenu('system');
 		console.putmsg(color.txt_user + user.alias + color.txt_sym + '@' + color.txt_menu + 'System Menu' + color.txt_sym + ':\1n');
 
 		var key = console.getkey(K_NOECHO).toUpperCase();
@@ -363,13 +368,13 @@ function systemMenu() {
 			case 'U':
 				//console.clear();
 				//console.line_counter = 1;
-				newMenu('userlist');
+				mystMenu('userlist');
 				//bbs.menu(user.command_shell + '\\header');
 				bbs.list_users();
 				console.line_counter = 1;
 				break;
 			case 'W':
-				newMenu('nodeltop');
+				mystMenu('nodeltop');
 				break;
 			case 'L':
 				console.crlf();
@@ -423,7 +428,7 @@ function chatMenu() {
 		bbs.node_action = NODE_CHAT;
 		bbs.nodesync()
 		console.clear();
-		newMenu('chat');
+		mystMenu('chat');
 		console.putmsg(color.txt_user + user.alias + color.txt_sym + '@' + color.txt_menu + 'Chat Menu' + color.txt_sym + ':\1n');
 		var key = console.getkey(K_NOECHO).toUpperCase();
 		bbs.log_key(key);
@@ -462,7 +467,7 @@ function chatMenu() {
 				bbs.exec_xtrn('C0ACHAT');
 				break;
 			case 'D':
-				defaults2();
+				defaults(2);
 				break;
 			case 'R':
 				if (user.compare_ars("GUEST")) {
@@ -518,7 +523,7 @@ function emailMenu() {
 		bbs.node_action = NODE_RMAL;
 		bbs.nodesync();
 		console.clear();
-		newMenu('email');
+		mystMenu('email');
 		console.putmsg(color.txt_user + user.alias + color.txt_sym + '@' + color.txt_menu + 'Email Menu' + color.txt_sym + ':\1n');
 		//options and commands to perform
 		var key = console.getkey(K_NOECHO).toUpperCase();
@@ -573,7 +578,7 @@ function emailMenu() {
 
 
 
-function defaults() {
+function defaults(page) {
 	if (user.compare_ars('GUEST')) {
 		alert('Guest access restricted.');
 		console.pause();
@@ -582,16 +587,20 @@ function defaults() {
 	if (thisShell.toUpperCase() != user.command_shell.toUpperCase()) {
 		return;
 	}
-	var defPage = '1';
-while (bbs.online) {
 	
+	var defPage = '1';
+	if (page) {
+	defPage = page;
+	}
+	
+while (bbs.online) {
 	
 	if (defPage == '1') {
 				console.clear();
-			newMenu('fontcode');
-			console.putmsg(color.txt_text + 'Settings (b) for \1h\1w' + user.alias + ' #' + user.number + color.txt_text + ', Page ' + color.txt_text2 + '1');
+			mystMenu(conf.fontcode);
+			console.putmsg(color.txt_text + 'Settings for \1h\1w' + user.alias + ' #' + user.number + color.txt_text + ', Page ' + color.txt_text2 + '1');
 			console.crlf();
-			console.putmsg('                                     ' + color.def_head + 'USER ACCOUNT SETTINGS\1n');
+			console.putmsg(lpad(color.def_head + 'USER ACCOUNT SETTINGS\1n',64));
 			console.crlf();
 			console.putmsg(color.txt_sym + '[' + color.txt_sym2 + 'A' + color.txt_sym + '] ' + color.txt_text + 'Terminal Mode' + color.txt_text2 + '                  : \1n');
 			console.putmsg((user.settings & USER_AUTOTERM) ? color.def_on + 'Auto Detect \1n' : '');
@@ -632,7 +641,7 @@ while (bbs.online) {
 			console.putmsg((user.settings & USER_QUIET) ? color.def_on + 'ON\1n' : color.def_off + 'OFF\1n');
 			console.crlf();
 			console.crlf();
-			console.putmsg('                                     ' + color.def_head + 'USER PROFILE SETTINGS\1n');
+			console.putmsg(lpad(color.def_head + 'USER PROFILE SETTINGS\1n',64));
 			console.crlf();
 			console.putmsg(color.txt_sym + '[' + color.txt_sym2 + 'J' + color.txt_sym + '] ' + color.txt_text + 'Update Location/Affiliations' + color.txt_text2 + '   : \1n');
 			console.putmsg(color.def_value + user.location + '\1n');
@@ -812,7 +821,7 @@ while (bbs.online) {
 			console.clear();
 			console.putmsg(color.txt_text + 'Settings (b) for \1h\1w' + user.alias + ' #' + user.number + color.txt_text + ', Page ' + color.txt_text2 + '2');
 			console.crlf();
-			console.putmsg('                                     ' + color.def_head + 'CHAT SETTINGS\1n');
+			console.putmsg(lpad(color.def_head + 'CHAT SETTINGS\1n',56));
 			console.crlf();
 			console.putmsg(color.txt_sym + '[' + color.txt_sym2 + 'A' + color.txt_sym + '] ' + color.txt_text + 'Allow Paging' + color.txt_text2 + '                   : \1n');
 			console.putmsg((user.chat_settings & CHAT_NOPAGE) ? color.def_on + 'ON\1n' : color.def_off + 'OFF\1n');
@@ -823,7 +832,7 @@ while (bbs.online) {
 			console.putmsg(color.txt_sym + '[' + color.txt_sym2 + 'C' + color.txt_sym + '] ' + color.txt_text + 'Private Split-Screen Chat' + color.txt_text2 + '      : \1n');
 			console.putmsg((user.chat_settings & CHAT_SPLITP) ? '\1n\1cSPLIT SCREEN\001n' : '\1n\1cTRADITIONAL\001n');
 			console.crlf();
-			console.putmsg('                                     ' + color.def_head + 'MESSAGE SCAN SETTINGS\1n');
+			console.putmsg(lpad(color.def_head + 'MESSAGE SCAN SETTINGS\1n',64));
 			console.crlf();
 			console.putmsg(color.txt_sym + '[' + color.txt_sym2 + 'D' + color.txt_sym + '] ' + color.txt_text + 'Ask For "New Scan" At Login' + color.txt_text2 + '    : \1n');
 			console.putmsg((user.settings & USER_ASK_NSCAN) ? color.def_on + 'ON\1n' : color.def_off + 'OFF\1n');
@@ -839,7 +848,7 @@ while (bbs.online) {
 			console.crlf();
 			console.putmsg(color.txt_sym + '[' + color.txt_sym2 + 'I' + color.txt_sym + '] ' + color.txt_text + 'Set New Scan Pointers\1n');
 			console.crlf();
-			console.putmsg('                                     ' + color.def_head + 'MESSAGE READ SETTINGS\1n');
+			console.putmsg(lpad(color.def_head + 'MESSAGE READ SETTINGS\1n',64));
 			console.crlf();
 			console.putmsg(color.txt_sym + '[' + color.txt_sym2 + 'J' + color.txt_sym + '] ' + color.txt_text + 'Remember Current Sub-Board' + color.txt_text2 + '     : \1n');
 			console.putmsg((user.settings & USER_CURSUB) ? color.def_on + 'ON\1n' : color.def_off + 'OFF\1n');
@@ -851,7 +860,7 @@ while (bbs.online) {
 			console.putmsg((user.settings & USER_NETMAIL) ? color.def_on + 'ON\1n' : color.def_off + 'OFF\1n');
 			console.crlf();
 
-			console.putmsg('                                     ' + color.def_head + 'FILE SCAN OPTIONS\1n');
+			console.putmsg(lpad(color.def_head + 'FILE SCAN OPTIONS\1n',60));
 			console.crlf();
 			console.putmsg(color.txt_sym + '[' + color.txt_sym2 + 'M' + color.txt_sym + '] ' + color.txt_text + 'Default Download Protocol' + color.txt_text2 + '      : \1n');
 			console.putmsg('\1n\1c' + user.download_protocol + '-Modem');
@@ -928,372 +937,6 @@ while (bbs.online) {
 	return;
 }
 
-function defaults1() {
-
-		while (bbs.online) {
-
-			if (user.compare_ars('GUEST')) {
-				alert('Guest access restricted.');
-				console.pause();
-				return;
-			}
-			if (thisShell.toUpperCase() != user.command_shell.toUpperCase()) {
-				return;
-			}
-			bbs.node_action = NODE_DFLT;
-			bbs.nodesync();
-			console.clear();
-			newMenu('fontcode');
-			console.putmsg(color.txt_text + 'Settings for \1h\1w' + user.alias + ' #' + user.number + color.txt_text + ', Page ' + color.txt_text2 + '1');
-			console.crlf();
-			console.putmsg('                                     ' + color.def_head + 'USER ACCOUNT SETTINGS\1n');
-			console.crlf();
-			console.putmsg(color.txt_sym + '[' + color.txt_sym2 + 'A' + color.txt_sym + '] ' + color.txt_text + 'Terminal Mode' + color.txt_text2 + '                  : \1n');
-			console.putmsg((user.settings & USER_AUTOTERM) ? color.def_on + 'Auto Detect \1n' : '');
-			console.putmsg((user.settings & USER_ANSI) ? color.def_on + 'ANSI \1n ' : color.def_off + 'TTY\1n ');
-			console.putmsg((user.settings & USER_COLOR) ? color.def_on + '(Color) \1n' : color.def_off + '(Mono) \1n');
-			console.putmsg((user.settings & USER_NO_EXASCII) ? color.def_off + 'ASCII Only \1n' : ' \1n');
-			console.crlf();
-			console.putmsg(color.txt_sym + '[' + color.txt_sym2 + 'B' + color.txt_sym + '] ' + color.txt_text + 'External Editor' + color.txt_text2 + '                : \1n');
-			console.putmsg(color.def_on + xtrn_area.editor[user.editor].name);
-			console.crlf();
-			console.putmsg(color.txt_sym + '[' + color.txt_sym2 + 'C' + color.txt_sym + '] ' + color.txt_text + 'Screen Length' + color.txt_text2 + '                  : \1n');
-			var screenrows;
-			if (user.screen_rows) {
-				screenrows = user.screen_rows;
-			} else {
-				screenrows = color.def_value + 'Auto Detect ' + color.txt_sym + '(' + color.txt_sym2 + console.screen_rows + color.txt_sym + ')';
-			}
-			console.putmsg(color.def_on + screenrows);
-			console.crlf();
-
-			console.putmsg(color.txt_sym + '[' + color.txt_sym2 + 'D' + color.txt_sym + '] ' + color.txt_text + 'Current Command Shell' + color.txt_text2 + '          : \1n');
-			console.putmsg(color.def_on + user.command_shell.toUpperCase());
-			console.crlf();
-
-			console.putmsg(color.txt_sym + '[' + color.txt_sym2 + 'E' + color.txt_sym + '] ' + color.txt_text + 'Expert Mode' + color.txt_text2 + '                    : \1n');
-			console.putmsg((user.settings & USER_EXPERT) ? color.def_on + 'ON\1n' : color.def_off + 'OFF\1n');
-			console.crlf();
-			console.putmsg(color.txt_sym + '[' + color.txt_sym2 + 'F' + color.txt_sym + '] ' + color.txt_text + 'Screen Pause' + color.txt_text2 + '                   : \1n');
-			console.putmsg((user.settings & USER_PAUSE) ? color.def_on + 'ON\1n' : color.def_off + 'OFF\1n');
-			console.crlf();
-			console.putmsg(color.txt_sym + '[' + color.txt_sym2 + 'G' + color.txt_sym + '] ' + color.txt_text + 'Hot Keys' + color.txt_text2 + '                       : \1n');
-			console.putmsg((user.settings & USER_COLDKEYS) ? color.def_off + 'OFF\1n' : color.def_on + 'ON\1n');
-			console.crlf();
-			console.putmsg(color.txt_sym + '[' + color.txt_sym2 + 'H' + color.txt_sym + '] ' + color.txt_text + 'Spinning Cursor' + color.txt_text2 + '                : \1n');
-			console.putmsg((user.settings & USER_SPIN) ? color.def_on + 'ON\1n' : color.def_off + 'OFF\1n');
-			console.crlf();
-			console.putmsg(color.txt_sym + '[' + color.txt_sym2 + 'I' + color.txt_sym + '] ' + color.txt_text + 'Default to Quiet Mode' + color.txt_text2 + '          : \1n');
-			console.putmsg((user.settings & USER_QUIET) ? color.def_on + 'ON\1n' : color.def_off + 'OFF\1n');
-			console.crlf();
-			console.crlf();
-			console.putmsg('                                     ' + color.def_head + 'USER PROFILE SETTINGS\1n');
-			console.crlf();
-			console.putmsg(color.txt_sym + '[' + color.txt_sym2 + 'J' + color.txt_sym + '] ' + color.txt_text + 'Update Location/Affiliations' + color.txt_text2 + '   : \1n');
-			console.putmsg(color.def_value + user.location + '\1n');
-			console.crlf();
-			console.putmsg(color.txt_sym + '[' + color.txt_sym2 + 'K' + color.txt_sym + '] ' + color.txt_text + 'Change Password\1n');
-			console.crlf();
-			console.putmsg(color.txt_sym + '[' + color.txt_sym2 + 'L' + color.txt_sym + '] ' + color.txt_text + 'Change Internet E-mail' + color.txt_text2 + '         : \1n');
-			console.putmsg(color.def_on + user.netmail + '\1n');
-			console.crlf();
-			console.putmsg(color.def_off + ' -  ' + color.txt_text + 'Local Email ' + color.def_off + '(READ ONLY)' + color.txt_text2 + '        : ');
-			console.putmsg(color.def_off + user.email + '\1n');
-			console.crlf();
-			console.putmsg(color.txt_sym + '[' + color.txt_sym2 + 'M' + color.txt_sym + '] ' + color.txt_text + 'Update Signature');
-			console.crlf();
-			console.putmsg(color.def_off + ' -  ' + color.txt_text + 'Birthdate ' + color.def_off + '(READ ONLY)' + color.txt_text2 + '          : ');
-			console.putmsg(color.def_off + user.birthdate + '\1n');
-			console.putmsg(color.txt_sym + ' (' + color.txt_sym2 + user.age + color.txt_sym + ') \1n');
-			console.crlf();
-			console.putmsg(color.txt_sym + '[' + color.txt_sym2 + 'N' + color.txt_sym + '] ' + color.txt_text + 'Change Gender' + color.txt_text2 + '                  : \1n');
-			console.putmsg(color.def_on + user.gender + '\1n');
-
-			console.gotoxy(1, 22);
-			console.putmsg(color.txt_sym + '[' + color.txt_sym2 + 'Q' + color.txt_sym + '] ' + color.txt_text + 'uit. ' + color.txt_sym + '[' + color.txt_sym2 + 'ARROWS' + color.txt_sym + '] ' + color.txt_text + 'To Switch Pages.');
-			console.crlf();
-			console.crlf();
-			console.putmsg(color.txt_user + user.alias + color.txt_sym + '@' + color.txt_menu + 'Defaults Menu 1' + color.txt_sym + ': \1n');
-			var key = console.getkey(K_NOECHO).toUpperCase();
-			bbs.log_key(key);
-			switch (key) {
-				// USER OPTIONS
-			case 'J':
-				var lastlocation = user.location;
-				console.crlf();
-				console.crlf();
-				console.putmsg(color.def_value + 'Currently: ' + color.txt_text2 + lastlocation);
-				console.crlf();
-				console.putmsg(color.txt_sym + '[' + color.txt_sym2 + '?' + color.txt_sym + '] ' + color.txt_ques + 'Enter your location / group affiliations\1w: ');
-				var location = console.getstr(str);
-				if (!location || !location.length)
-					location = lastlocation;
-				bbs.log_str("  " + location);
-				user.location = location;
-				break;
-			case 'A':
-				//TERMINAL MODE SELECT
-				console.crlf();
-				if (console.yesno(color.txt_ques + 'Use automatic terminal type detection')) {
-					user.settings |= USER_AUTOTERM;
-				} else {
-					user.settings &= ~USER_AUTOTERM;
-					if (console.yesno(color.txt_ques + 'Does your terminal support ANSI')) {
-						user.settings |= USER_ANSI;
-					} else {
-						user.settings &= ~USER_ANSI;
-					}
-				}
-
-				if (console.yesno(color.txt_ques + 'Do you have a color terminal')) {
-					user.settings |= USER_COLOR;
-				} else {
-					user.settings &= ~USER_COLOR;
-				}
-
-				if (console.yesno(color.txt_ques + 'Does your terminal support IBM extended ASCII')) {
-					user.settings &= ~USER_NO_EXASCII;
-				} else {
-					user.settings |= USER_NO_EXASCII;
-				}
-
-				break;
-			case 'B':
-				// EXTERNAL EDITOR SELECT
-				bbs.select_editor();
-				break;
-			case 'C':
-				// SCREEN LENGTH SELECT 
-				console.crlf();
-				if (console.yesno(color.txt_ques + 'Auto Detect screen row length')) {
-					user.screen_rows = '';
-				} else {
-					var rows = console.getstr('', 2);
-					if (rows) {
-						user.screen_rows = rows;
-					}
-				}
-				break;
-			case 'D':
-				// COMMAND SHELL SELECT
-				bbs.select_shell()
-				return;
-			case 'A':
-				// QWK ARCHIVE TYPE
-				break;
-				// CHAT OPTIONS
-			case 'E':
-				user.settings ^= USER_EXPERT;
-				break;
-			case 'F':
-				user.settings ^= USER_PAUSE;
-				break;
-			case 'G':
-				user.settings ^= USER_COLDKEYS;
-				break;
-			case 'H':
-				user.settings ^= USER_SPIN;
-				break;
-			case 'K':
-				console.crlf();
-				console.crlf();
-				alert(color.def_value + 'Current password: ' + color.txt_text2 + user.security.password.toUpperCase());
-				console.crlf();
-				if (!console.noyes(color.txt_ques + 'Would you like to change your password')) {
-					console.putmsg('\1h\1cPlease enter your new password:');
-					var pw = console.getstr('', 8, K_UPPER);
-					if (pw) {
-						user.security.password = pw;
-						break;
-					} else {
-						break;
-					}
-				}
-				break;
-			case 'I':
-				user.settings ^= USER_QUIET;
-				break;
-			case 'L':
-				var lastnetmail = user.netmail;
-				console.crlf();
-				console.crlf();
-				console.putmsg(color.def_value + 'Currently: ' + color.txt_text2 + lastnetmail);
-				console.crlf();
-				console.putmsg(color.txt_sym + '[' + color.txt_sym2 + '?' + color.txt_sym + '] ' + color.txt_ques + 'Enter Your Internet E-mail Address\1w: ');
-				var netmail = console.getstr();
-				if (!netmail || !netmail.length)
-					var netmail = lastnetmail;
-
-				bbs.log_str("  " + netmail);
-				user.netmail = netmail;
-				break;
-			case 'M':
-				console.crlf();
-				console.editfile(format('%suser/%04d.sig', system.data_dir, user.number));
-				break;
-			case 'N':
-				var lastgender = user.gender;
-				console.crlf();
-				console.crlf();
-				console.putmsg(color.def_value + 'Currently: ' + color.txt_text2  + lastgender);
-				console.crlf();
-				console.putmsg(color.txt_sym + '[' + color.txt_sym2 + '?' + color.txt_sym + '] ' + color.txt_ques + 'Enter Your Gender\1w: ');
-				var gender = console.getstr('', 1, K_UPPER);
-				if (!gender || !gender.length)
-					var gender = lastgender;
-
-				bbs.log_str("  " + netmail);
-				user.gender = gender;
-				break;
-			case KEY_LEFT:
-			case KEY_RIGHT:
-			case '2':
-				defaults2();
-				break;
-			case 'Q':
-				mainMenu();
-
-			case '\r':
-				break;
-			default:
-				break;
-			} // end switch
-		} // while online
-		return; // RETURN TO MAIN (to have last caller processed if user hangs up)
-	} // end default 1
-
-
-function defaults2() {
-
-		while (bbs.online) {
-			if (user.compare_ars('GUEST')) {
-				alert('Guest access restricted.');
-				console.pause();
-				return;
-			}
-			if (thisShell.toUpperCase() != user.command_shell.toUpperCase()) {
-				return;
-			}
-			bbs.node_action = NODE_DFLT;
-			bbs.nodesync();
-			console.clear();
-			console.putmsg(color.txt_text + 'Settings for \1h\1w' + user.alias + ' #' + user.number + color.txt_text + ', Page ' + color.txt_text2 + '2');
-			console.crlf();
-			console.putmsg(color.def_head + lpad('CHAT SETTINGS',38) + '\1n');
-			console.crlf();
-			console.putmsg(color.txt_sym + '[' + color.txt_sym2 + 'A' + color.txt_sym + '] ' + color.txt_text + 'Allow Paging' + color.txt_text2 + '                   : \1n');
-			console.putmsg((user.chat_settings & CHAT_NOPAGE) ? color.def_on + 'ON\1n' : color.def_off + 'OFF\1n');
-			console.crlf();
-			console.putmsg(color.txt_sym + '[' + color.txt_sym2 + 'B' + color.txt_sym + '] ' + color.txt_text + 'Activity Alerts' + color.txt_text2 + '                : \1n');
-			console.putmsg((user.chat_settings & CHAT_NOACT) ? color.def_on + 'ON\1n' : color.def_off + 'OFF\1n');
-			console.crlf();
-			console.putmsg(color.txt_sym + '[' + color.txt_sym2 + 'C' + color.txt_sym + '] ' + color.txt_text + 'Private Split-Screen Chat' + color.txt_text2 + '      : \1n');
-			console.putmsg((user.chat_settings & CHAT_SPLITP) ? '\1n\1cSPLIT SCREEN\001n' : '\1n\1cTRADITIONAL\001n');
-			console.crlf();
-			console.putmsg(color.def_head + lpad('MESSAGE SCAN SETTINGS',38) + '\1n');
-			console.crlf();
-			console.putmsg(color.txt_sym + '[' + color.txt_sym2 + 'D' + color.txt_sym + '] ' + color.txt_text + 'Ask For "New Scan" At Login' + color.txt_text2 + '    : \1n');
-			console.putmsg((user.settings & USER_ASK_NSCAN) ? color.def_on + 'ON\1n' : color.def_off + 'OFF\1n');
-			console.crlf();
-			console.putmsg(color.txt_sym + '[' + color.txt_sym2 + 'E' + color.txt_sym + '] ' + color.txt_text + 'Ask For Your Un-read Msg Scan' + color.txt_text2 + '  : \1n');
-			console.putmsg((user.settings & USER_ASK_SSCAN) ? color.def_on + 'ON\1n' : color.def_off + 'OFF\1n');
-			console.crlf();
-			console.putmsg(color.txt_sym + '[' + color.txt_sym2 + 'F' + color.txt_sym + '] ' + color.txt_text + 'New Scan Configuration\1n');
-			console.crlf();
-			console.putmsg(color.txt_sym + '[' + color.txt_sym2 + 'G' + color.txt_sym + '] ' + color.txt_text + 'Your "to-you" Message Scan Config\1n');
-			console.crlf();
-			console.putmsg(color.txt_sym + '[' + color.txt_sym2 + 'H' + color.txt_sym + '] ' + color.txt_text + 'Re-init New Scan Pointers\1n');
-			console.crlf();
-			console.putmsg(color.txt_sym + '[' + color.txt_sym2 + 'I' + color.txt_sym + '] ' + color.txt_text + 'Set New Scan Pointers\1n');
-			console.crlf();
-			console.putmsg(color.def_head + lpad('MESSAGE READ SETTINGS',38) + '\1n');
-			console.crlf();
-			console.putmsg(color.txt_sym + '[' + color.txt_sym2 + 'J' + color.txt_sym + '] ' + color.txt_text + 'Remember Current Sub-Board' + color.txt_text2 + '     : \1n');
-			console.putmsg((user.settings & USER_CURSUB) ? color.def_on + 'ON\1n' : color.def_off + 'OFF\1n');
-			console.crlf();
-			console.putmsg(color.txt_sym + '[' + color.txt_sym2 + 'K' + color.txt_sym + '] ' + color.txt_text + 'Clear Screen Between Messages' + color.txt_text2 + '  : \1n');
-			console.putmsg((user.settings & USER_CLRSCRN) ? color.def_on + 'ON\1n' : color.def_off + 'OFF\1n');
-			console.crlf();
-			console.putmsg(color.txt_sym + '[' + color.txt_sym2 + 'L' + color.txt_sym + '] ' + color.txt_text + 'Forward Email to Netmail' + color.txt_text2 + '       : \1n');
-			console.putmsg((user.settings & USER_NETMAIL) ? color.def_on + 'ON\1n' : color.def_off + 'OFF\1n');
-			console.crlf();
-
-			console.putmsg(color.def_head + lpad('FILE SCAN OPTIONS',38) + '\1n');
-			console.crlf();
-			console.putmsg(color.txt_sym + '[' + color.txt_sym2 + 'M' + color.txt_sym + '] ' + color.txt_text + 'Default Download Protocol' + color.txt_text2 + '      : \1n');
-			console.putmsg('\1n\1c' + user.download_protocol + '-Modem');
-			console.crlf();
-			console.putmsg(color.txt_sym + '[' + color.txt_sym2 + 'N' + color.txt_sym + '] ' + color.txt_text + 'Auto New File Scan At Login' + color.txt_text2 + '    : \1n');
-			console.putmsg((user.settings & USER_ANFSCAN) ? color.def_on + 'ON\1n' : color.def_off + 'OFF\1n');
-			console.crlf();
-			console.putmsg(color.txt_sym + '[' + color.txt_sym2 + 'O' + color.txt_sym + '] ' + color.txt_text + 'Batch Download File tagging' + color.txt_text2 + '    : \1n');
-			console.putmsg((user.settings & USER_BATCHFLAG) ? color.def_on + 'ON\1n' : color.def_off + 'OFF\1n');
-
-			console.gotoxy(1, 22);
-			console.putmsg(color.txt_sym + '[' + color.txt_sym2 + 'Q' + color.txt_sym + '] ' + color.txt_text + 'uit. ' + color.txt_sym + '[' + color.txt_sym2 + 'ARROWS' + color.txt_sym + '] ' + color.txt_text + 'To Switch Pages.');
-			console.crlf();
-			console.crlf();
-			console.putmsg(color.txt_user + user.alias + color.txt_sym + '@' + color.txt_menu + 'Defaults Menu 2' + color.txt_sym + ':\1n');
-			var key = console.getkey(K_NOECHO).toUpperCase();
-			bbs.log_key(key);
-			switch (key) {
-				// MSG SCAN OPTIONS
-			case 'G':
-				bbs.exec('?DM_NewScanConfig.js');
-				break;
-			case 'H':
-				bbs.reinit_msg_ptrs();
-				break;
-			case 'K':
-				user.settings ^= USER_CLRSCRN;
-				break;
-			case 'D':
-				user.settings ^= USER_ASK_NSCAN;
-				break;
-			case 'E':
-				user.settings ^= USER_ASK_SSCAN;
-				break;
-			case 'J':
-				user.settings ^= USER_CURSUB;
-				break;
-			case 'I':
-				bbs.cfg_msg_ptrs();
-				break;
-				// CHAT OPTIONS
-			case 'C':
-				user.chat_settings ^= CHAT_SPLITP;
-				break;
-			case 'B':
-				user.chat_settings ^= CHAT_NOACT;
-				break;
-			case 'A':
-				user.chat_settings ^= CHAT_NOPAGE;
-				break;
-			case 'N':
-				user.settings ^= USER_ANFSCAN;
-				break;
-			case 'O':
-				user.settings ^= USER_BATCHFLAG;
-				break;
-			case 'L':
-				user.settings ^= USER_NETMAIL;
-				break;
-			case KEY_RIGHT:
-			case KEY_LEFT:
-			case '1':
-				defaults1();
-				break;
-			case 'Q':
-				defaults1();
-				break;
-			case '\r':
-				break;
-			default:
-				break;
-			} // end switch
-		} // while online
-		return; // RETURN TO MAIN (to have last caller processed if user hangs up)
-	} // end default 2
 
 
 /*****************************************************************
@@ -1304,7 +947,7 @@ function slashMenu(option) {
 	switch (option) {
 	case '?':
 		console.clear();
-		newMenu('obscure');
+		mystMenu('obscure');
 		break;
 	case 'O':
 		logOffFast();
@@ -1345,7 +988,7 @@ function colonMenu(option) {
 		case '?':
 		case 'HELP':
 			console.clear();
-			newMenu('obscure');
+			mystMenu('obscure');
 			break;
 		case 'BULL':
 			bbs.exec_xtrn('BULLSHIT');
@@ -1357,10 +1000,10 @@ function colonMenu(option) {
 			defaults();
 			return;
 		case 'CFG2':
-			defaults2();
+			defaults(2);
 			return;
 		case 'CFG':
-			defaults1();
+			defaults();
 			return;
 		case 'EMAI':
 		case 'MAIL':
@@ -1406,7 +1049,7 @@ function colonMenu(option) {
 			//case '16CO':
 			//	bbs.exec_xtrn('16COLORS'); break;
 		case 'WHO':
-			newMenu('nodeltop');
+			mystMenu('nodeltop');
 			break;
 		case 'QUIT':
 			logoffMenu('fast');
@@ -1463,7 +1106,7 @@ function lastCaller() {
 	var timeon = rpad(user.stats.timeon_last_logon.toString(),4);
 	var speed = rpad(client.protocol,6);
 	bbs.log_str('Adding to lastcaller list.');
-	var newline = " \1h\1c" + nodenum + " \1h\1b" + username + " \1k" + location + " \1w" + dateon + " \1c" + timeon + " \1n\1y" + actions + "  \1h" + speed + " ";
+	var newline = " \1h\1c" + nodenum + " \1h\1b" + username + " \1k" + location + " \1w" + dateon + " \1m" + timeon + " \1n\1y" + actions + "  \1h" + speed + " ";
 	
 
 
@@ -1486,10 +1129,10 @@ function saveLastCaller(newline) {
 
 function showLastCallers(int) {
 	var lastcallers = system.mods_dir + '\\cslast10.asc';
-	f = new File(lastcallers);
-	newMenu('last10h');
+	//f = new File(lastcallers);
+	mystMenu('last10h');
 	console.printtail(lastcallers, int);
-	newMenu('footer');
+	mystMenu('footer');
 }
 
 /*****************************************************************
@@ -1497,7 +1140,7 @@ function showLastCallers(int) {
 *****************************************************************/
 
 function logOff() {
-	newMenu('goodbye');
+	mystMenu('goodbye');
 	bbs.exec('*D1LINER');
 	bbs.logoff(); // interactive logoff procedure
 	if (!bbs.online) {
@@ -1545,11 +1188,16 @@ console.printfile("../text/" + this.ansiDirectory + "/" + file_getname(random_li
 }
 }
 
+function viewUser(user) {
+	
+}
+
+
 function addRumor() {
 	console.clear();
-	newMenu(conf.rumorHeader);
+	mystMenu(conf.rumorHeader);
 	console.printtail(conf.rumorFile,10);
-	newMenu(conf.rumorFooter);
+	mystMenu(conf.rumorFooter);
 	console.gotoxy(1,22);
 
 	//console.putmsg('\1h\1b<--------------------------------------------------------------\1k[\1mng \1b2016\1k]\1b------>\1n\1w');
@@ -1650,6 +1298,55 @@ function customizeRumor(rumor) {
 			break;
 		}
 	}
+}
+
+
+function autoMsg() {
+	console.clear();
+	mystMenu(conf.amsgHeader);
+	console.printtail(conf.amsgFile,6);
+	console.crlf();
+	mystMenu(conf.amsgFooter);
+	console.crlf();
+	console.crlf();
+	if(!console.noyes('\1h\1bEnter new AutoMsg')) {
+
+	console.putmsg('Line 1:');
+	var amsg1 = console.getstr("", 50);
+	if (amsg1 == null || amsg1 == "" || amsg1 =="q" || amsg1 =="quit") return;
+	console.putmsg('Line 2:');
+	var amsg2 = console.getstr("", 50);
+	console.putmsg('Line 3:');
+	var amsg3 = console.getstr("", 50);
+	var uname = user.alias;
+	
+	console.putmsg('\1h\1bSave your Message? \1h\1w[\1mRET\1w] \1bor \1mY \1bto Save. \1w[\1mQ\1w] \1bto quit.\1n');
+    var key = console.getkey(K_NOECHO).toUpperCase();
+    bbs.log_key(key);
+    switch (key) {
+	case "Q":
+		return;
+	case 'Y':
+	case "\r":
+		f = new File(conf.amsgFile)
+		if (!f.open("w")) {
+			alert("Error opening file: " + conf.amsgFile);
+			return;
+		}
+			//f.writeln(amsg);
+			f.write('\r\n' + conf.amsgPrefix + amsg1);
+			f.write('\r\n' + conf.amsgPrefix + amsg2);
+			f.write('\r\n' + conf.amsgPrefix + amsg3);
+			f.write('\r\n\r\n' + conf.amsgGreetz + uname);
+			f.close();
+			console.center('\1h\1rSaved. \1n\1w\r\n');
+			console.pause();
+			break;
+		default:
+			break;
+		}
+	}
+	return;
 }
 
 
