@@ -5,7 +5,7 @@
 ----------------------------------------------------------------------------*/
 load("sbbsdefs.js"); //load helper functions
 
-// SET DEFAULT VALUES FOR ERRATHANG
+// SET DEFAULT VALUES FOR ERRATHANG 
 
 // set up default colors, if no theme settings.js file is found.
 var color = {
