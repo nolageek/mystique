@@ -5,7 +5,7 @@
 ----------------------------------------------------------------------------*/
 load("sbbsdefs.js"); //load helper functions
 
-// SET DEFAULT VALUES FOR ERRATHANG 
+// SET DEFAULT VALUES FOR ERRATHANG
 
 // set up default colors, if no theme settings.js file is found.
 var color = {
@@ -32,7 +32,7 @@ var conf = {
 	rumorHeader	: 'rumors',
 	rumorFooter	: 'footer',
 	amsgFile	: system.mods_dir + '\\automsg.txt',
-	amsgGreetz	: '@RIGHT:30@\1h\1mg \1n\1mr e e t z \1hf \1n\1mr o m\1w: \1h\1c-\1n\1c',
+	amsgGreetz	: '@RIGHT:30@\1h\1mg \1n\1mreetz \1hf\1n\1mrom\1w: \1h\1c-\1n\1c',
 	amsgPrefix	: '@RIGHT:10@\1h\1b',
 	amsgHeader	: 'automsg-h',
 	amsgFooter	: 'automsg-f',
@@ -61,6 +61,22 @@ var activity = {
 var settingsFile = system.text_dir + 'menu\\' + user.command_shell + '\\settings.js';
 if (file_exists(settingsFile)) {
 	load(settingsFile);
+}
+
+load("json-client.js");
+var root = system.text_dir + "menu\\mystique\\";
+if(!file_exists(root + "mystique.ini")) {
+	console.putmsg(color.txt_success + root + "mystique.ini: Server DB initialization file missing");
+} else { 
+
+var server_file = new File(root + "mystique.ini");
+server_file.open('r',true);
+//var autoUpdate=server_file.iniGetValue(null,"autoUpdate");
+var serverAddr=server_file.iniGetValue(null,"host","localhost");
+var serverPort=server_file.iniGetValue(null,"port",10088);
+server_file.close();
+
+var db=new JSONClient(serverAddr,serverPort);
 }
 
 
@@ -211,7 +227,7 @@ function mainMenu() {
 				break;
 			case '/': // SLASH MENU
 				console.putmsg('/');
-				slashMenu(console.getkeys('?DXO').toUpperCase());
+				slashMenu(console.getkeys('?DGXO').toUpperCase());
 				break;
 			case ';': // SYSOP MENU
 			case '.':
@@ -242,7 +258,7 @@ function msgMenu() {
 		console.clear();
 		mystMenu(conf.fontcode);
 		mystMenu('message');
-		console.putmsg(color.txt_sym + '[' + color.txt_sym2 + '@GN@' + color.txt_sym + '] ' + color.txt_user + '@GRP@' + color.txt_sym + ' [' + color.txt_sym2 + '@SN@' + color.txt_sym + '] ' + color.txt_menu + '@SUB@\1n');
+		console.putmsg(color.txt_sym + '[' + color.txt_sym2 + '@GN@' + color.txt_sym + '] ' + color.txt_user + '@GRP@' + color.txt_sym + ' [' + color.txt_sym2 + '@SN@' + color.txt_sym + '] ' + color.txt_menu + '@SUBL@\1n');
 		console.crlf();
 		console.putmsg(color.txt_user + user.alias + color.txt_sym + '@' + color.txt_menu + 'Message Menu' + color.txt_sym + ':\1n');
 
@@ -299,13 +315,13 @@ function msgMenu() {
 				// SCAN FOR NEW MESSAGES
 			case 'N':
 				// will use DDMesgReader if installed as Loadable module
-				console.print("\r\nchNew Message Scan\r\n");
+				console.print("\r\n" + color.txt_ques + "New Message Scan\r\n");
 				bbs.scan_subs(SCAN_NEW);
 				break;
 				// SCAN FOR UNREAD MESSAGE TO USER
 			case 'S':
 				// will use DDMesgReader if installed as Loadable module
-				console.print("\r\nchScan for Messages Posted to You\r\n");
+				console.print("\r\n" + color.txt_ques + "Scan for Messages Posted to You\r\n");
 				bbs.scan_subs(SCAN_TOYOU);
 				break;
 				// CONF NEW MSG SCAN
@@ -535,7 +551,7 @@ function emailMenu() {
 			case 'S':
 				bbs.node_action = NODE_SMAL;
 				bbs.nodesync();
-				console.print("_\r\nbhE-mail (User name or number): w");
+				console.print("\r\n" + color.txt_ques + "E-mail (User name or number): \1n");
 				str = console.getstr("", 40, K_UPRLWR, false);
 				if (str == null || str == "")
 					break;
@@ -880,6 +896,7 @@ while (bbs.online) {
 			bbs.log_key(key);
 			switch (key) {
 				// MSG SCAN OPTIONS
+			case 'F':
 			case 'G':
 				bbs.exec('?DM_NewScanConfig.js');
 				break;
@@ -937,6 +954,119 @@ while (bbs.online) {
 	return;
 }
 
+function xferMenu() {
+	while (bbs.online) {
+		bbs.node_action = NODE_XFER;
+		bbs.nodesync();
+		console.clear();
+		mystMenu(conf.fontcode);
+		mystMenu('xfer');
+		console.putmsg(color.txt_sym + '[' + color.txt_sym2 + '@LN@' + color.txt_sym + '] ' + color.txt_user + '@LIB@' + color.txt_sym + ' [' + color.txt_sym2 + '@DN@' + color.txt_sym + '] ' + color.txt_menu + '@DIRL@\1n');
+		console.crlf();
+		console.putmsg(color.txt_user + user.alias + color.txt_sym + '@' + color.txt_menu + 'File Menu' + color.txt_sym + ':\1n');
+
+		var key = console.getkey(K_NOECHO).toUpperCase();
+		bbs.log_key(key);
+		switch (key) {
+			// NAVIGATE GROUPS/SUBS
+			case '}':
+			case KEY_UP:
+				if(bbs.curlib == file_area.lib_list.length-1)
+					bbs.curlib=0;
+				else
+					bbs.curlib++;
+				break;
+			case '{':
+			case KEY_DOWN:
+				if(bbs.curlib == 0)
+					bbs.curlib=file_area.lib_list.length-1;
+				else
+					bbs.curlib--;
+				break;
+			case ']':
+			case KEY_RIGHT:
+				if(bbs.curdir>=file_area.lib_list[bbs.curlib].dir_list.length-1)
+					bbs.curdir=0;
+				else
+					bbs.curdir++;
+				break;
+			case '[':
+			case KEY_LEFT:
+				if(bbs.curdir==0)
+					bbs.curdir=file_area.lib_list[bbs.curlib].dir_list.length-1;
+				else
+					bbs.curdir--;
+				break;
+				// SELECT GROUPS/SUBS
+			case 'G':
+			case 'J':
+				bbs.exec('?DDFileAreaChooser.js');
+				break;
+			case 'L':				
+				// LIST FILES IN CURRENT DIRECTORY
+				bbs.list_files();
+				break;
+			case 'R':
+			case '\r':
+				// will use DDMesgReader if installed as Loadable module
+				bbs.scan_dirs();
+				break;
+				// POST NEW MESSAGE IN CURRENT GROUP
+			case 'U':
+				bbs.upload_file();
+				break;
+				// SCAN FOR NEW MESSAGES
+			case 'N':
+				// will use DDMesgReader if installed as Loadable module
+				console.print("\r\n" + color.txt_ques + "New File Scan\r\n");
+				bbs.scan_dirs(FL_ULTIME);
+				break;
+				// FIND TEXT IN POSTS
+			case 'F':
+				console.print("\r\n" + color.txt_ques + "Find Text in File Descriptions (no wildcards)\r\n");				
+				bbs.scan_dirs(FL_FINDDESC);
+				break;
+			case 'S':
+				console.print("\r\n" + color.txt_ques + "Search Text in File Names.\r\n");				
+				bbs.scan_dirs(FL_NO_HDR);
+				break;
+				// SLASH AND COLON MENUS
+			case '/': // FOR /F /N /R /J
+				console.putmsg('/');
+				slashMenu(console.getkeys('?DXOFNR').toUpperCase());
+				break;
+			case ':':
+				console.putmsg(':');
+				colonMenu(console.getstr('', 4).toUpperCase());
+				break;
+			case 'D':
+				console.print("\r\nchDownload File(s)\r\n");
+				if(bbs.batch_dnload_total>0) {
+					if(console.yesno(bbs.text(DownloadBatchQ))) {
+						bbs.batch_download();
+						break;
+					}
+				}
+				break;
+				// QUIT
+			case 'Q':
+				mainMenu();
+				return;
+			case '?':
+				mystMenu('xfer');
+				return;				
+				// LOG OUT
+			case 'O':
+				logOff();
+				break;
+				// FALL THROUGH
+			default:
+				break;
+		} // end switch
+	} // while online
+	return; // RETURN TO MAIN (to have last caller processed if user hangs up)
+} // end message
+
 
 
 /*****************************************************************
@@ -959,7 +1089,10 @@ function slashMenu(option) {
 		break;
 		// MSG MENU
 	case 'F':
-		bbs.scan_subs(SCAN_FIND);
+		bbs.scan_subs(SCAN_FIND, all = true);
+		break;
+	case 'G':
+		xferMenu();
 		break;
 	case 'N':
 		bbs.scan_subs(SCAN_NEW, all = true);
@@ -1107,11 +1240,20 @@ function lastCaller() {
 	var speed = rpad(client.protocol,6);
 	bbs.log_str('Adding to lastcaller list.');
 	var newline = " \1h\1c" + nodenum + " \1h\1b" + username + " \1k" + location + " \1w" + dateon + " \1m" + timeon + " \1n\1y" + actions + "  \1h" + speed + " ";
-	
-
 
 	if (stealth == 'disabled') {
 		saveLastCaller(newline);
+		var numLast = db.read('mystique','laston',1);
+		numLast = numLast.length;
+		db.write('mystique', 'laston.' + numLast + '.nodenum',bbs.node_num.toString(),2);
+		db.write('mystique', 'laston.' + numLast + '.username',user.alias,2);
+		db.write('mystique', 'laston.' + numLast + '.usernum',user.number,2);
+		db.write('mystique', 'laston.' + numLast + '.location',user.location,2);
+		db.write('mystique', 'laston.' + numLast + '.dateon',client.connect_time,2);
+		db.write('mystique', 'laston.' + numLast + '.dateon2',strftime("%m/%d/%y %I:%M%p", client.connect_time),2);
+		db.write('mystique', 'laston.' + numLast + '.timeon',user.stats.timeon_last_logon.toString(),2);
+		db.write('mystique', 'laston.' + numLast + '.speed',client.protocol,2);
+		db.write('mystique', 'laston.' + numLast + '.actions',actions,2);
 	}
 }
 
@@ -1135,6 +1277,7 @@ function showLastCallers(int) {
 	mystMenu('footer');
 }
 
+
 /*****************************************************************
                                                  LOG OFF FUNCTIONS
 *****************************************************************/
@@ -1145,8 +1288,6 @@ function logOff() {
 	bbs.logoff(); // interactive logoff procedure
 	if (!bbs.online) {
 		activity.hungup = '-';
-		//lastCaller();
-		//exit();
 	}
 }
 
@@ -1154,8 +1295,6 @@ function logOffFast() {
 	bbs.logoff(false); // non-interactive logoff procedure
 	if (!bbs.online) {
 		activity.hungup = '-';
-		//lastCaller();
-		//exit();
 	}
 }
 
@@ -1184,14 +1323,8 @@ function randomANSI(folder,filenamePrefix){
 var random_list = directory(system.text_dir + this.ansiDirectory + "/" + this.filePrefix + "*.*")  //returns an array of filenames from a directory that start with the file_name "random" followed by a number from the text directory, in a sub-folder "called coolansi"
 if(random_list.length){  //if there are files in the directory
 console.printfile("../text/" + this.ansiDirectory + "/" + file_getname(random_list[random(random_list.length)]).slice(0,-4) + ".ans");  // prints a file from the directory "..text/coolansi/" and basically creates a filename to grab by generating a random number and putting it in between the strings "random" and ".ans" in this case.
-			//console.pause();
 }
 }
-
-function viewUser(user) {
-	
-}
-
 
 function addRumor() {
 	console.clear();
@@ -1200,8 +1333,6 @@ function addRumor() {
 	mystMenu(conf.rumorFooter);
 	console.gotoxy(1,22);
 
-	//console.putmsg('\1h\1b<--------------------------------------------------------------\1k[\1mng \1b2016\1k]\1b------>\1n\1w');
-	
 	console.gotoxy(1,23);
 	console.putmsg('\1h\1b Enter new rumor [\1wRET\1b] quits:\1n');
 	console.gotoxy(1,24);
@@ -1284,6 +1415,12 @@ function customizeRumor(rumor) {
 				}
 				f.writeln(styled);
 				f.close();
+			var numRumor = db.read('mystique','rumors',1);
+			numRumor = numRumor.length;
+			//console.putmsg(numRumor);
+			//console.pause();
+			
+			db.write('mystique', 'rumors.' + numRumor,styled,2);
 			console.gotoxy(1,22);
 			console.clearline();
 			console.gotoxy(1,23);
@@ -1328,6 +1465,10 @@ function autoMsg() {
 		return;
 	case 'Y':
 	case "\r":
+		db.write('mystique', 'automsg.' + 'amsg1',amsg1,2);
+		db.write('mystique', 'automsg.' + 'amsg2',amsg2,2);
+		db.write('mystique', 'automsg.' + 'amsg3',amsg3,2);
+		db.write('mystique', 'automsg.' + 'byline',conf.amsgGreetz + uname,2);
 		f = new File(conf.amsgFile)
 		if (!f.open("w")) {
 			alert("Error opening file: " + conf.amsgFile);
