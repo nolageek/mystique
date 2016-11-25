@@ -85,7 +85,7 @@ mystMenu(conf.fontcode); // reset font type
 
 
 // test for menu in user.command_shell directory, if not found use mystique version.
-function mystMenu(file) {
+function mystMenuOLD(file) {
 	var menu_file = system.text_dir + '\menu\\' + user.command_shell + '\\' + file;
 	if (!file_exists(menu_file + '.ans') && !file_exists(menu_file + '.asc')) {
 		bbs.menu('mystique\\' + file);
@@ -94,7 +94,31 @@ function mystMenu(file) {
 	}
 }
 
-// if calling rumor or automsg mods, rum them and skedaddle. 
+function mystMenu(file){
+	// checks current command_shell dir for file name, if doesn't exist, use mystique dir. assign to ansiDir
+var ansiDir = system.text_dir + '\menu\\' +  user.command_shell + '\\';
+var menu_file = system.text_dir + '\menu\\' + user.command_shell + '\\' + file;
+	if (!file_exists(ansiDir + file + '.ans') && !file_exists(ansiDir + file + '.asc')) {
+		var ansiDir = system.text_dir + '\menu\\mystique\\';
+	} 
+
+var random_list = directory(ansiDir + '\\' + file + "*.*")  //returns an array of filenames from ansiDir
+if(random_list.length){  //if there are files in the directory
+bbs.menu(ansiDir + '\\' + file_getname(random_list[random(random_list.length)]).slice(0,-4));  
+// displays random file from array.
+}
+}
+
+function randomANSI(filenamePrefix){
+  this.ansiDirectory = system.text_dir + '\menu\\' + user.command_shell;
+  this.filePrefix = filenamePrefix;
+var random_list = directory(system.text_dir + this.ansiDirectory + "/" + this.filePrefix + "*.*")  //returns an array of filenames from a directory that start with the file_name "random" followed by a number from the text directory, in a sub-folder "called coolansi"
+if(random_list.length){  //if there are files in the directory
+console.printfile("../text/" + this.ansiDirectory + "/" + file_getname(random_list[random(random_list.length)]).slice(0,-4) + ".ans");  // prints a file from the directory "..text/coolansi/" and basically creates a filename to grab by generating a random number and putting it in between the strings "random" and ".ans" in this case.
+			console.pause();
+}
+}
+// if calling rumor or automsg mods, rum them and exit. 
 if (myst.param == 'addrumor') {
 	addRumor();
 	exit();
@@ -108,7 +132,6 @@ if (myst.param == 'addrumor') {
 var thisShell = user.command_shell;
 
 js.on_exit('lastCaller()'); // generate last caller entry if disconnected
-
 
 // activity will be posted to last caller list by default
 var stealth = 'disabled';
@@ -218,12 +241,14 @@ function mainMenu() {
 				mystMenu('nodeltop');
 				break;
 			case 'L':
-				console.crlf();
+				lastCallersPrompt();
+/*				console.crlf();
 				console.putmsg(color.txt_sym + '[' + color.txt_sym2 + '?' + color.txt_sym + '] ' + color.txt_ques + 'How many callers would you like to list? ' + color.txt_text2 + '100 Max.' + color.txt_sym + '[' + color.txt_sym2 + '10' + color.txt_sym + ']');
 				console.crlf();
 				console.putmsg(color.txt_sym + '    :');
 				var num = console.getnum(100, 10);
 				showLastCallers(num);
+				*/
 				break;
 			case '/': // SLASH MENU
 				console.putmsg('/');
@@ -393,12 +418,14 @@ function systemMenu() {
 				mystMenu('nodeltop');
 				break;
 			case 'L':
-				console.crlf();
+				lastCallersPrompt();
+/*				console.crlf();
 				console.putmsg(color.txt_sym + '[' + color.txt_sym2 + '?' + color.txt_sym + '] ' + color.txt_ques + 'How many callers would you like to list? ' + color.txt_text2 + '100 Max.' + color.txt_sym + '[' + color.txt_sym2 + '10' + color.txt_sym + ']');
 				console.crlf();
 				console.putmsg(color.txt_sym + '    :');
 				var num = console.getnum(100, 10);
 				showLastCallers(num);
+				*/
 				break;
 			case 'D':
 				defaults();
@@ -414,7 +441,7 @@ function systemMenu() {
 				break;
 			case 'Y':
 				console.clear();
-				randomANSI('menu\\' + user.command_shell, 'header');
+				mystMenu('header');
 				//bbs.menu(user.command_shell + '\\header');
 				bbs.user_info();
 				break;
@@ -681,7 +708,7 @@ while (bbs.online) {
 
 			//	bbs.menu(user.command_shell + '/settings1');
 			console.gotoxy(1, 22);
-			console.putmsg(color.txt_sym + '[' + color.txt_sym2 + 'Q' + color.txt_sym + '] ' + color.txt_text + 'uit. ' + color.txt_sym + '[' + color.txt_sym2 + 'ARROWS' + color.txt_sym + '] ' + color.txt_text + 'To Switch Pages.');
+			console.putmsg(color.txt_sym + '[' + color.txt_sym2 + 'Q' + color.txt_sym + '] ' + color.txt_text + 'uit. ' + color.txt_sym + '[' + color.txt_sym2 + 'ARROWS' + color.txt_sym + ',' + color.txt_sym2 + '#' + color.txt_sym + '] ' + color.txt_text + 'To Switch Pages.');
 			console.crlf();
 			console.crlf();
 			console.putmsg(color.txt_user + user.alias + color.txt_sym + '@' + color.txt_menu + 'Defaults Menu 1' + color.txt_sym + ': \1n');
@@ -835,7 +862,7 @@ while (bbs.online) {
 	} else {
 	
 			console.clear();
-			console.putmsg(color.txt_text + 'Settings (b) for \1h\1w' + user.alias + ' #' + user.number + color.txt_text + ', Page ' + color.txt_text2 + '2');
+			console.putmsg(color.txt_text + 'Settings for \1h\1w' + user.alias + ' #' + user.number + color.txt_text + ', Page ' + color.txt_text2 + '2');
 			console.crlf();
 			console.putmsg(lpad(color.def_head + 'CHAT SETTINGS\1n',56));
 			console.crlf();
@@ -869,7 +896,7 @@ while (bbs.online) {
 			console.putmsg(color.txt_sym + '[' + color.txt_sym2 + 'J' + color.txt_sym + '] ' + color.txt_text + 'Remember Current Sub-Board' + color.txt_text2 + '     : \1n');
 			console.putmsg((user.settings & USER_CURSUB) ? color.def_on + 'ON\1n' : color.def_off + 'OFF\1n');
 			console.crlf();
-			console.putmsg(color.txt_sym + '[' + color.txt_sym2 + 'K' + color.txt_sym + '] ' + color.txt_text + 'Clear Screen Between Messages' + color.txt_text2 + '  : \1n');
+			console.putmsg(color.txt_sym + '[' + color.txt_sym2 + 'K' + color.txt_sym + '] ' + color.txt_text + 'Clear Screen Between Messages' + color.txt_text2 + '  : \1n'); // clear screen btw msgs
 			console.putmsg((user.settings & USER_CLRSCRN) ? color.def_on + 'ON\1n' : color.def_off + 'OFF\1n');
 			console.crlf();
 			console.putmsg(color.txt_sym + '[' + color.txt_sym2 + 'L' + color.txt_sym + '] ' + color.txt_text + 'Forward Email to Netmail' + color.txt_text2 + '       : \1n');
@@ -888,7 +915,7 @@ while (bbs.online) {
 			console.putmsg((user.settings & USER_BATCHFLAG) ? color.def_on + 'ON\1n' : color.def_off + 'OFF\1n');
 
 			console.gotoxy(1, 22);
-			console.putmsg(color.txt_sym + '[' + color.txt_sym2 + 'Q' + color.txt_sym + '] ' + color.txt_text + 'uit. ' + color.txt_sym + '[' + color.txt_sym2 + 'ARROWS' + color.txt_sym + '] ' + color.txt_text + 'To Switch Pages.');
+			console.putmsg(color.txt_sym + '[' + color.txt_sym2 + 'Q' + color.txt_sym + '] ' + color.txt_text + 'uit. ' + color.txt_sym + '[' + color.txt_sym2 + 'ARROWS' + color.txt_sym + ',' + color.txt_sym2 + '#' + color.txt_sym + '] ' + color.txt_text + 'To Switch Pages.');
 			console.crlf();
 			console.crlf();
 			console.putmsg(color.txt_user + user.alias + color.txt_sym + '@' + color.txt_menu + 'Defaults Menu 2' + color.txt_sym + ':\1n');
@@ -1277,6 +1304,13 @@ function showLastCallers(int) {
 	mystMenu('footer');
 }
 
+function lastCallersPrompt() {
+	console.crlf();
+	console.putmsg(color.txt_sym + '[' + color.txt_sym2 + '?' + color.txt_sym + '] ' + color.txt_ques + 'How many callers would you like to list? ' + color.txt_text2 + '100 Max.' + color.txt_sym + ' [' + color.txt_sym2 + '10' + color.txt_sym + ']');
+	console.putmsg(color.txt_sym + ' : ');
+	var num = console.getnum(100, 10);
+	showLastCallers(num);
+	}
 
 /*****************************************************************
                                                  LOG OFF FUNCTIONS
@@ -1317,15 +1351,6 @@ function rpad(str, length, padString) {
     return str;
 }
 
-function randomANSI(folder,filenamePrefix){
-  this.ansiDirectory = folder;
-  this.filePrefix = filenamePrefix;
-var random_list = directory(system.text_dir + this.ansiDirectory + "/" + this.filePrefix + "*.*")  //returns an array of filenames from a directory that start with the file_name "random" followed by a number from the text directory, in a sub-folder "called coolansi"
-if(random_list.length){  //if there are files in the directory
-console.printfile("../text/" + this.ansiDirectory + "/" + file_getname(random_list[random(random_list.length)]).slice(0,-4) + ".ans");  // prints a file from the directory "..text/coolansi/" and basically creates a filename to grab by generating a random number and putting it in between the strings "random" and ".ans" in this case.
-}
-}
-
 function addRumor() {
 	console.clear();
 	mystMenu(conf.rumorHeader);
@@ -1334,7 +1359,7 @@ function addRumor() {
 	console.gotoxy(1,22);
 
 	console.gotoxy(1,23);
-	console.putmsg('\1h\1b Enter new rumor [\1wRET\1b] quits:\1n');
+	console.putmsg(color.txt_ques + 'Enter new rumor ' + color.txt_text2 + '[RET] ' + color.txt_text + 'quits:\1n');
 	console.gotoxy(1,24);
 	console.putmsg(':');
 	var rumor = console.getstr("", 77);
@@ -1352,7 +1377,7 @@ function customizeRumor(rumor) {
 	var rumor = (rpad(rumor,78));
 	console.gotoxy(1,23);
 	
-	console.putmsg('\1h\1m Pimp Your Rumor: \1wUP\1b/\1wDOWN\1b: \1mFG  \1wLEFT\1b/\1wRIGHT\1b: \1mBG  \1b[\1wRET\1b] \1mAccept   \1w[\1wQ\1b] \1mQuit\1n');
+	console.putmsg(color.txt_text2 + 'Pimp Your Rumor: ' + color.txt_text + 'UP' + color.txt_text2 + '/' + color.txt_text + 'DOWN: \1mFG  \1wLEFT\1b/\1wRIGHT\1b: \1mBG  \1b[\1wRET\1b] \1mAccept   \1w[\1wQ\1b] \1mQuit\1n');
 	console.gotoxy(1,24);
 	console.putmsg('\10\1n\1w[' + rumor + '\10\1n\1w]')
 	
@@ -1446,7 +1471,7 @@ function autoMsg() {
 	mystMenu(conf.amsgFooter);
 	console.crlf();
 	console.crlf();
-	if(!console.noyes('\1h\1bEnter new AutoMsg')) {
+	if(!console.noyes(color.txt_ques + 'Enter new AutoMsg')) {
 
 	console.putmsg('Line 1:');
 	var amsg1 = console.getstr("", 50);
@@ -1457,7 +1482,7 @@ function autoMsg() {
 	var amsg3 = console.getstr("", 50);
 	var uname = user.alias;
 	
-	console.putmsg('\1h\1bSave your Message? \1h\1w[\1mRET\1w] \1bor \1mY \1bto Save. \1w[\1mQ\1w] \1bto quit.\1n');
+	console.putmsg(color.txt_ques + 'Save your Message? ' + color.txt_text2 + '[RET] ' + color.txt_text + 'to Save.' + color.txt_text2 + '[Q] ' + color.txt_text + 'to quit.\1n');
     var key = console.getkey(K_NOECHO).toUpperCase();
     bbs.log_key(key);
     switch (key) {
