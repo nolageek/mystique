@@ -18,5 +18,5 @@ Features:
 * Built in automessage mod.
 * Improved 'last 10 callers' page, based on ami-x style boards (with user activity flags for entries)
 * Random ansis for everything. ex: main.ans,main2.ans,main-new.ans,mainfive.ans should all rotate for main menus.
-* Optional use of JSON database
-* setting overrides for sub themes
+* Optional use of JSON database for last 10 callers, automsg and rumors.
+* setting overrides for sub themes (default font, colors, etc)
