@@ -36,7 +36,8 @@ var conf = {
 	amsgPrefix	: '@RIGHT:10@\1h\1b',
 	amsgHeader	: 'automsg-h',
 	amsgFooter	: 'automsg-f',
-	fontcode	: '437'
+	fontcode	: '437',
+	useDB		: 1 // use JSON DB if enabled
 }
 
 
@@ -63,67 +64,53 @@ if (file_exists(settingsFile)) {
 	load(settingsFile);
 }
 
-load("json-client.js");
-var root = system.text_dir + "menu\\mystique\\";
-if(!file_exists(root + "mystique.ini")) {
-	console.putmsg(color.txt_success + root + "mystique.ini: Server DB initialization file missing");
-} else { 
+if (conf.useDB == 1) { // use JSON DB if enabled
+	load("json-client.js");
+	var root = system.text_dir + "menu\\mystique\\";
+	if(!file_exists(root + "mystique.ini")) {
+		console.putmsg(color.txt_success + root + "mystique.ini: Server DB initialization file missing");
+	} else { 
 
-var server_file = new File(root + "mystique.ini");
-server_file.open('r',true);
-//var autoUpdate=server_file.iniGetValue(null,"autoUpdate");
-var serverAddr=server_file.iniGetValue(null,"host","localhost");
-var serverPort=server_file.iniGetValue(null,"port",10088);
-server_file.close();
+	var server_file = new File(root + "mystique.ini");
+	server_file.open('r',true);
+	//var autoUpdate=server_file.iniGetValue(null,"autoUpdate");
+	var serverAddr=server_file.iniGetValue(null,"host","localhost");
+	var serverPort=server_file.iniGetValue(null,"port",10088);
+	server_file.close();
 
-var db=new JSONClient(serverAddr,serverPort);
+	var db=new JSONClient(serverAddr,serverPort);
+	}
 }
-
 
 // Load fontcode.ans from selected menu set directory, reset the font to 437 or amiga style.
 mystMenu(conf.fontcode); // reset font type
 
 
 // test for menu in user.command_shell directory, if not found use mystique version.
-function mystMenuOLD(file) {
-	var menu_file = system.text_dir + '\menu\\' + user.command_shell + '\\' + file;
-	if (!file_exists(menu_file + '.ans') && !file_exists(menu_file + '.asc')) {
-		bbs.menu('mystique\\' + file);
-	} else {
-		bbs.menu(user.command_shell + '\\' + file);
-	}
+function mystMenu(file) {
+    // checks current command_shell dir for file name, if doesn't exist, use mystique dir. assign to ansiDir
+    var ansiDir = system.text_dir + '\menu\\' + user.command_shell + '\\';
+    var menu_file = system.text_dir + '\menu\\' + user.command_shell + '\\' + file;
+    if (!file_exists(ansiDir + file + '.ans') && !file_exists(ansiDir + file + '.asc')) {
+        var ansiDir = system.text_dir + '\menu\\mystique\\';
+    }
+
+    var random_list = directory(ansiDir + '\\' + file + "*.*") //returns an array of filenames from ansiDir
+    if (random_list.length) { //if there are files in the directory
+        bbs.menu(ansiDir + '\\' + file_getname(random_list[random(random_list.length)]).slice(0, -4));
+        // displays random file from array.
+    }
 }
 
-function mystMenu(file){
-	// checks current command_shell dir for file name, if doesn't exist, use mystique dir. assign to ansiDir
-var ansiDir = system.text_dir + '\menu\\' +  user.command_shell + '\\';
-var menu_file = system.text_dir + '\menu\\' + user.command_shell + '\\' + file;
-	if (!file_exists(ansiDir + file + '.ans') && !file_exists(ansiDir + file + '.asc')) {
-		var ansiDir = system.text_dir + '\menu\\mystique\\';
-	} 
-
-var random_list = directory(ansiDir + '\\' + file + "*.*")  //returns an array of filenames from ansiDir
-if(random_list.length){  //if there are files in the directory
-bbs.menu(ansiDir + '\\' + file_getname(random_list[random(random_list.length)]).slice(0,-4));  
-// displays random file from array.
-}
-}
-
-function randomANSI(filenamePrefix){
-  this.ansiDirectory = system.text_dir + '\menu\\' + user.command_shell;
-  this.filePrefix = filenamePrefix;
-var random_list = directory(system.text_dir + this.ansiDirectory + "/" + this.filePrefix + "*.*")  //returns an array of filenames from a directory that start with the file_name "random" followed by a number from the text directory, in a sub-folder "called coolansi"
-if(random_list.length){  //if there are files in the directory
-console.printfile("../text/" + this.ansiDirectory + "/" + file_getname(random_list[random(random_list.length)]).slice(0,-4) + ".ans");  // prints a file from the directory "..text/coolansi/" and basically creates a filename to grab by generating a random number and putting it in between the strings "random" and ".ans" in this case.
-			console.pause();
-}
-}
-// if calling rumor or automsg mods, rum them and exit. 
+// if calling rumor or automsg mods, run them and exit. 
 if (myst.param == 'addrumor') {
 	addRumor();
 	exit();
 } else if (myst.param == 'automsg') {
 	autoMsg();
+	exit();
+} else if (myst.param == 'last10') {
+	newLastCallers(10);
 	exit();
 }
 
@@ -144,6 +131,12 @@ sleep(200);
 
 // if user is sysop, allow them to enable stealth mode.
 if (user.is_sysop) {
+	console.putmsg(color.txt_info + 'JSON DB\1n')
+	if (conf.useDB == 0 ) { // use JSON DB if enabled
+		console.putmsg(color.txt_alert + ' NOT')
+		}
+	console.putmsg(color.txt_info + ' ENABLED.\1n')
+	console.crlf();
 	if (console.yesno(color.txt_ques + 'Login in stealth mode')) {
 		stealth = 'enabled';
 		sleep(500);
@@ -241,14 +234,7 @@ function mainMenu() {
 				mystMenu('nodeltop');
 				break;
 			case 'L':
-				lastCallersPrompt();
-/*				console.crlf();
-				console.putmsg(color.txt_sym + '[' + color.txt_sym2 + '?' + color.txt_sym + '] ' + color.txt_ques + 'How many callers would you like to list? ' + color.txt_text2 + '100 Max.' + color.txt_sym + '[' + color.txt_sym2 + '10' + color.txt_sym + ']');
-				console.crlf();
-				console.putmsg(color.txt_sym + '    :');
-				var num = console.getnum(100, 10);
-				showLastCallers(num);
-				*/
+				newLastCallers();
 				break;
 			case '/': // SLASH MENU
 				console.putmsg('/');
@@ -1270,17 +1256,19 @@ function lastCaller() {
 
 	if (stealth == 'disabled') {
 		saveLastCaller(newline);
-		var numLast = db.read('mystique','laston',1);
-		numLast = numLast.length;
-		db.write('mystique', 'laston.' + numLast + '.nodenum',bbs.node_num.toString(),2);
-		db.write('mystique', 'laston.' + numLast + '.username',user.alias,2);
-		db.write('mystique', 'laston.' + numLast + '.usernum',user.number,2);
-		db.write('mystique', 'laston.' + numLast + '.location',user.location,2);
-		db.write('mystique', 'laston.' + numLast + '.dateon',client.connect_time,2);
-		db.write('mystique', 'laston.' + numLast + '.dateon2',strftime("%m/%d/%y %I:%M%p", client.connect_time),2);
-		db.write('mystique', 'laston.' + numLast + '.timeon',user.stats.timeon_last_logon.toString(),2);
-		db.write('mystique', 'laston.' + numLast + '.speed',client.protocol,2);
-		db.write('mystique', 'laston.' + numLast + '.actions',actions,2);
+		if (conf.useDB == 1) { // use JSON DB if enabled
+			var numLast = db.read('mystique','laston',1);
+			numLast = numLast.length;
+			db.write('mystique', 'laston.' + numLast + '.nodenum',bbs.node_num.toString(),2);
+			db.write('mystique', 'laston.' + numLast + '.username',user.alias,2);
+			db.write('mystique', 'laston.' + numLast + '.usernum',user.number,2);
+			db.write('mystique', 'laston.' + numLast + '.location',user.location,2);
+			db.write('mystique', 'laston.' + numLast + '.dateon',client.connect_time,2);
+			db.write('mystique', 'laston.' + numLast + '.dateon2',strftime("%m/%d/%y %I:%M%p", client.connect_time),2);
+			db.write('mystique', 'laston.' + numLast + '.timeon',user.stats.timeon_last_logon.toString(),2);
+			db.write('mystique', 'laston.' + numLast + '.speed',client.protocol,2);
+			db.write('mystique', 'laston.' + numLast + '.actions',actions,2);
+		}
 	}
 }
 
@@ -1304,13 +1292,28 @@ function showLastCallers(int) {
 	mystMenu('footer');
 }
 
-function lastCallersPrompt() {
+function lastCallersPrompt(int) {
 	console.crlf();
 	console.putmsg(color.txt_sym + '[' + color.txt_sym2 + '?' + color.txt_sym + '] ' + color.txt_ques + 'How many callers would you like to list? ' + color.txt_text2 + '100 Max.' + color.txt_sym + ' [' + color.txt_sym2 + '10' + color.txt_sym + ']');
 	console.putmsg(color.txt_sym + ' : ');
 	var num = console.getnum(100, 10);
 	showLastCallers(num);
 	}
+	
+function newLastCallers(int) {
+	var num = int
+	var lastcallers = system.mods_dir + '\\cslast10.asc';
+	console.crlf();
+	if (num == 'undefined' || num == null) {
+		console.putmsg(color.txt_sym + '[' + color.txt_sym2 + '?' + color.txt_sym + '] ' + color.txt_ques + 'How many callers would you like to list? ' + color.txt_text2 + '100 Max.' + color.txt_sym + ' [' + color.txt_sym2 + '10' + color.txt_sym + ']');
+		console.putmsg(color.txt_sym + ' : ');
+		num = console.getnum(100, 10);
+		}
+	mystMenu('last10h');
+	console.printtail(lastcallers, num);
+	mystMenu('footer');
+	}
+	
 
 /*****************************************************************
                                                  LOG OFF FUNCTIONS
@@ -1377,7 +1380,7 @@ function customizeRumor(rumor) {
 	var rumor = (rpad(rumor,78));
 	console.gotoxy(1,23);
 	
-	console.putmsg(color.txt_text2 + 'Pimp Your Rumor: ' + color.txt_text + 'UP' + color.txt_text2 + '/' + color.txt_text + 'DOWN: \1mFG  \1wLEFT\1b/\1wRIGHT\1b: \1mBG  \1b[\1wRET\1b] \1mAccept   \1w[\1wQ\1b] \1mQuit\1n');
+	console.putmsg(color.txt_text + 'Pimp Your Rumor: ' + color.txt_sym + '[' + color.txt_sym2 + 'UP' + color.txt_sym + '/' + color.txt_sym2 + 'DOWN' + color.txt_sym + ']' + color.txt_text + ':' + color.txt_text2 + 'FG' + color.txt_sym + '   [' + color.txt_sym2 + 'LEFT' + color.txt_sym + '/' + color.txt_sym2 + 'RIGHT' + color.txt_sym  +']' + color.txt_text + ':' + color.txt_text2 + 'BG' + color.txt_sym + '   [' + color.txt_sym2 + 'RET' + color.txt_sym + ']' + color.txt_text + ':' + color.txt_text2 + 'Accept' + color.txt_sym + '   [' + color.txt_sym2 + 'Q' + color.txt_sym + ']' + color.txt_text + ':' + color.txt_text2 + 'Quit');
 	console.gotoxy(1,24);
 	console.putmsg('\10\1n\1w[' + rumor + '\10\1n\1w]')
 	
@@ -1490,10 +1493,12 @@ function autoMsg() {
 		return;
 	case 'Y':
 	case "\r":
+		if (conf.useDB == 1) { // use JSON DB if enabled
 		db.write('mystique', 'automsg.' + 'amsg1',amsg1,2);
 		db.write('mystique', 'automsg.' + 'amsg2',amsg2,2);
 		db.write('mystique', 'automsg.' + 'amsg3',amsg3,2);
 		db.write('mystique', 'automsg.' + 'byline',conf.amsgGreetz + uname,2);
+		}
 		f = new File(conf.amsgFile)
 		if (!f.open("w")) {
 			alert("Error opening file: " + conf.amsgFile);
