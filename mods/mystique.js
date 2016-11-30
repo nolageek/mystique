@@ -1284,22 +1284,6 @@ function saveLastCaller(newline) {
 	f.close();
 }
 
-function showLastCallers(int) {
-	var lastcallers = system.mods_dir + '\\cslast10.asc';
-	//f = new File(lastcallers);
-	mystMenu('last10h');
-	console.printtail(lastcallers, int);
-	mystMenu('footer');
-}
-
-function lastCallersPrompt(int) {
-	console.crlf();
-	console.putmsg(color.txt_sym + '[' + color.txt_sym2 + '?' + color.txt_sym + '] ' + color.txt_ques + 'How many callers would you like to list? ' + color.txt_text2 + '100 Max.' + color.txt_sym + ' [' + color.txt_sym2 + '10' + color.txt_sym + ']');
-	console.putmsg(color.txt_sym + ' : ');
-	var num = console.getnum(100, 10);
-	showLastCallers(num);
-	}
-	
 function newLastCallers(int) {
 	var num = int
 	var lastcallers = system.mods_dir + '\\cslast10.asc';
@@ -1354,6 +1338,19 @@ function rpad(str, length, padString) {
     return str;
 }
 
+function showRumor() {
+var rumorFile = system.mods_dir + '\\rumor.txt';
+	f = new File(rumorFile);
+	if (!f.open('r')) {
+		alert("Error opening file: " + rumorFile);
+		return;
+	}
+	var all = f.readAll();
+	f.close();
+	var rumor = all[Math.floor(Math.random()*all.length)];
+	console.putmsg(rumor);
+}
+
 function addRumor() {
 	console.clear();
 	mystMenu(conf.rumorHeader);
@@ -1362,7 +1359,7 @@ function addRumor() {
 	console.gotoxy(1,22);
 
 	console.gotoxy(1,23);
-	console.putmsg(color.txt_ques + 'Enter new rumor ' + color.txt_text2 + '[RET] ' + color.txt_text + 'quits:\1n');
+	console.putmsg(color.txt_text + 'Enter new rumor ' + color.txt_sym + '[' + color.txt_sym2 + 'RET' + color.txt_sym + '] ' + color.txt_text + 'quits:\1n');
 	console.gotoxy(1,24);
 	console.putmsg(':');
 	var rumor = console.getstr("", 77);
@@ -1374,9 +1371,6 @@ function customizeRumor(rumor) {
 	
 	var fgarray = {1:"\1w",2:"\1y",3:"\1r",4:"\1h\1b",5:"\1g",6:"\1m",7:"\1h\1y",8:"\1h\1m"};
 	var bgarray = {10:"\0010",11:"\0016",12:"\0012",13:"\0015",14:"\0014",15:"\0013",16:"\0011"};
-	
-
-
 	var rumor = (rpad(rumor,78));
 	console.gotoxy(1,23);
 	
@@ -1436,26 +1430,25 @@ function customizeRumor(rumor) {
 			break;
 		case "\r":
 			var styled = '\10\1n\1w[' + bgarray[bg] + fgarray[fg] + rumor + '\10\1n\1w]';
-				f = new File(conf.rumorFile)
-				if (!f.open("a")) {
-				alert("Error opening file: " + conf.rumorFile);
-				return;
-				}
-				f.writeln(styled);
-				f.close();
-			var numRumor = db.read('mystique','rumors',1);
-			numRumor = numRumor.length;
-			//console.putmsg(numRumor);
-			//console.pause();
-			
-			db.write('mystique', 'rumors.' + numRumor,styled,2);
+			f = new File(conf.rumorFile)
+			if (!f.open("a")) {
+			alert("Error opening file: " + conf.rumorFile);
+			return;
+			}
+			f.writeln(styled);
+			f.close();
+			if (conf.useDB == 1) { // use JSON DB if enabled
+				var numRumor = db.read('mystique','rumors',1);
+				db.write('mystique', 'rumors.' + numRumor,styled,2);
+			}
 			console.gotoxy(1,22);
 			console.clearline();
 			console.gotoxy(1,23);
 			console.clearline();
 			console.gotoxy(1,24);
 			console.clearline();
-			console.center('\1h\1rSaved. \1n\1w\r\n');
+			console.center(color.txt_success + 'Saved.\1n');
+			console.crlf();
 			console.pause();
 			accepted = true;
 			break;
