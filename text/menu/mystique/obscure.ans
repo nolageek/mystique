@@ -1,21 +1,9 @@
 [0;40;37m
-[44;30m [1;37mGLOBAL COMMANDS                                      [40m [0;30mGLA
 
-[1;36m:?[0m[5C[1;34mThis Help Menu[0m[8C[1;36m:EMAI  [34mE-Mail Menu [0m[6C[1;34m  [36m:QUIT  [34mLog-Off
-[36m:ONEL  [34mOne Liners  (Local)   [36m:EXPE  [34mExpert Menu Toggle  [36m:QWK   [34mQWK Menu
-[36m:ONEN  [34mOne Liners  (Network)[0m [1;36m:GAME  [34mXternal Programs  [0m  [1;36m:RUM   [34mRumors Menu
-[36m:HELP  [34mThis Help Menu[0m[8C[1;36m:GFIL  [34mText Files[0m[10C[1;36m:RUMR  [34mRumors Menu
-[36m:BULL  [34mBulletins[0m[13C[1;36m:JEOP  [34mJeopardized![0m[8C[1;36m:SCOR  [34mScores Menu
-[36m:CFG   [34mDefaults[0m[14C[1;36m:LAST  [34mLast X Callers    [0m  [1;36m:SYS   [34mSystem Menu
-[36m:CFG2  [34mDefaults (Page 2)   [0m  [1;36m:MAIL  [34mE-Mail Menu[0m[9C[1;36m:TEXT  [34mText Files
-[36m:CHAT  [34mChat Menu[0m[13C[1;36m:MAIN  [34mMain Menu[0m[11C[1;36m:WHO   [34mWho Is On-Line
-[36m:CONF  [34mDefaults (Alt Style)[0m  [1;36m:MSG   [34mMessage Menu[0m[8C[1;36m:WMAT  [34mWMATA DC Train
-[0m[56C[1;36m:XTRN  [34mXternal Programs
+[44;30m [1;37mSLASH COMMANDS                                       [0m
+[1m [0mSlash commands are menu specific and are alternative versions to their
+ non-slash counterparts.  [1;32m* [0mMsg Menu[10C[1;34m* [0mAlmost Everywhere
 
-[0;44;30m [1;37mSLASH COMMANDS                                       [0m
-
-[1m [36m/F[37m.[0mind [1;35mT[30mext [32m* [30m(Alt Style)   [36m/D[37m.[0mefaults [1;34m* [30m(Alt Style)   [36m/X.[0mExpert [35mM[1;30menus [34m*
-[30m [36m/N[37m.[0mew [1;35mS[30mcan  [32m* [30m(Alt Style)   [0m[27C[1;36m/O[37m.[0mFast [1;35mL[30mog-[34mO[30mff [34m*
-[30m [36m/R[37m.[0mead [1;35mM[30msg  [32m* [30m(Alt Style)
-
-[0m[13C[1;32m* [0mMsg Menu[16C[1;35m [34m* [0mAlmost Everywhere
+ [1;36m/F[37m.[0mind [1;35mT[30mext [32m* [30m(Alt Style)   [36m/D[37m.[0mefaults [1;34m* [30m(Alt Style)   [36m/X.[0mExpert [35mM[1;30menus [34m*
+ [36m/N[37m.[0mew [1;35mS[30mcan  [32m* [30m(Alt Style)[30C[36m/O[37m.[0mFast [1;35mL[30mog-[34mO[30mff [34m*
+ [36m/R[37m.[0mead [1;35mM[30msg  [32m* [30m(Alt Style)
