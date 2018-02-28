@@ -5,7 +5,7 @@ This is still very much in development. You can see it in action on my BBS, capi
 
 I'm writing this synchronet shell since I couldn't find a simple one that was written in js - they're mostly in BAJA and that prevented a lot of what I wanted to do. I'm pulling a lot of inspiration from various other BBS software.
 
-NOTE: At this time I am *not supporting* this shell in any way and I would not recommend using this on your board.
+NOTE: At this time I am *not supporting* this shell in any way and I would not recommend using this on your board unless you wanted to mess with it.
 
 I am working on making it more generic so others can use it.
 
@@ -21,3 +21,4 @@ Recent changes:
 * JSON database for last 10 callers, automsg and rumors no longer an option. I didn't feel it was really needed.
 * rumors and automessage mod no longer built in, will soon be a separately released mod.
 * Cleaned up my Incredibly Terrible code a bit - is now merely Really Terrible.
+* Streamlined menu options - it's very likely some options are missing on the menus or vice versa.
