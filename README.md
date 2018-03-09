@@ -16,8 +16,15 @@ Features:
 * setting overrides for sub themes (default font, colors, etc)
 
 Recent changes:
-2/28/2018
-* JSON database for last 10 callers, automsg and rumors no longer an option. I didn't feel it was really needed.
+3/9/2018:
+* Reverted back to using JSON database for lastx callers. I decided I wanted more display flexibility across themes.
+* Thanks to eChicken and mcmlxxix for help with the JSON db coding.
+* More cleaning of terrible code.
+* Added more horrible code.
+
+2/28/2018:
+* JSON database for lastx callers, automsg and rumors no longer an option. I didn't feel it was really needed.
 * rumors and automessage mods are no longer built in and will soon be released separately.
 * Cleaned up my Incredibly Terrible code a bit - is now merely Really Terrible.
 * Streamlined menu options - it's very likely some options are missing on the menus or vice versa.
+* Separated settings and functions into different files so that I can further separate rumors and automsg into their own mods.
