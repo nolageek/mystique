@@ -72,3 +72,37 @@ function file_select_library() {
     bbs.curlib = console.getnum(lib_list.length)-1;
     file_select_directory();
 }
+
+//Totally swiped this from ispyhumanfly //
+function timeSince(ts){
+    now = new Date();
+    ts = new Date(ts*1000);
+    var delta = now.getTime() - ts.getTime();
+
+    delta = delta/1000; //us to s
+
+    var ps, pm, ph, pd, min, hou, sec, days;
+
+    if(delta<=59){
+        return delta+"s";
+    }
+
+    if(delta>=60 && delta<=3599){
+        min = Math.floor(delta/60);
+        sec = delta-(min*60);
+        return min+"m";
+    }
+
+    if(delta>=3600 && delta<=86399){
+        hou = Math.floor(delta/3600);
+        min = Math.floor((delta-(hou*3600))/60);
+        return  hou +"h " + min + "m";
+    } 
+
+    if(delta>=86400){
+        days = Math.floor(delta/86400);
+        hou =  Math.floor((delta-(days*86400))/60/60);
+        return days+"d "+hou+"h";
+    }
+	
+	}

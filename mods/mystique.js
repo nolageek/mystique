@@ -1087,7 +1087,7 @@ function slashMenu(option) {
 
 function lastCaller() {
     if (user.total_logons < '3') {
-        activity.isnewu = '\1h\1gN\1n\1y';
+        activity.isnewu = '\1h\1gN\1n\1w';
     }
     if (bbs.logon_posts != '0') {
         activity.posted = 'P';
@@ -1111,7 +1111,6 @@ function lastCaller() {
 			location:user.location,
 			ip:user.ip_address,
 			dateon:client.connect_time,
-			dateon2:strftime("%m/%d/%y %I:%M%p", client.connect_time),
 			timeon:user.stats.timeon_last_logon.toString(),
 			speed:client.protocol,
 			actions:actions,
@@ -1141,16 +1140,16 @@ function saveLastCaller(call_data) {
         return;
     }
 	// save to text file
-    f.writeln(" \1h\1c" + rpad(call_data.nodenum,3) + "\1h\1b" + rpad(call_data.username,15) + "\1k" + rpad(call_data.location,20) + " \1w" + call_data.dateon2 + " \1m" + rpad(call_data.timeon,4) + "\1n\1y" + call_data.actions + "   \1h" + call_data.shell.toUpperCase());
+    f.writeln(" \1h\1c" + rpad(call_data.nodenum,3) + "\1h\1b" + rpad(call_data.username,15) + "\1k" + rpad(call_data.location,20) + " \1w" + strftime("%m/%d/%y %I:%M%p", call_data.dateon) + " \1m" + rpad(call_data.timeon,4) + "\1n\1y" + call_data.actions + "   \1h" + call_data.shell.toUpperCase());
     f.close();
 	
 	//save to JSON database
 	var db = new JSONClient(serverAddr, serverPort);
 	var laston = db.read("mystique", "laston", 1);
 	if(laston == undefined) db.write("mystique", "laston", [], 2);
-
 	db.push("mystique", "laston", call_data, 2);
 }
+
 
 function showLastCallers(int) {
     var num = int
@@ -1162,18 +1161,25 @@ function showLastCallers(int) {
         num = console.getnum(100, 10);
         }
 		console.crlf(5);
-	/*	
-	var db=new JSONClient(serverAddr,serverPort);
+		
+/*	var db=new JSONClient(serverAddr,serverPort);
 	var laston = db.read("mystique", "laston", 1);	
-	var len = db.read("mystique","laston",1).length;
-	var last10 = db.slice('mystique','laston',len-num,len,1);
-	WAIT FOR DATABASE TO BE MORE POPULATED*/
+	var allLastCallers = db.slice('mystique','laston',0,allLastCallers.length,1);
+	/*WAIT FOR DATABASE TO BE MORE POPULATED*/
+
+
+	/*var unique = [];
+	for (var n in allLastCallers) {
+		unique[n] = allLastCallers[n];
+	}
+		
+	console.pause()
+*/
 
     mystMenu('last10-h');
-	/*console.putmsg("\r\n" + len);
-	for (n in last10) 
-		console.putmsg(" \1h\1c" + rpad(last10[n].nodenum,3) + "\1h\1b" + rpad(last10[n].username,15) + "\1k" + rpad(last10[n].location,20) + " \1w" + last10[n].dateon2 + " \1m" + rpad(last10[n].timeon,4) + "\1n\1y" + last10[n].actions + " \1h" + last10[n].shell.toUpperCase() + "\r\n");
-	WAIT FOR DATABASE TO BE MORE POPULATED*/
+	/*for (n in last10) 
+		console.putmsg(" \1h\1c" + rpad(last10[n].nodenum,3) + "\1h\1b" + rpad(last10[n].username,15) + "\1k" + rpad(last10[n].location,20) + " \1w" + rpad(timeSince(last10[n].dateon),8)  + " \1m" + rpad(last10[n].timeon,4) + "\1n\1y" + last10[n].actions + " \1h" + last10[n].shell.toUpperCase() + "\r\n");
+	/*WAIT FOR DATABASE TO BE MORE POPULATED*/
     console.printtail(lastcallers, num);
     mystMenu('last10-f');
     }
@@ -1184,6 +1190,7 @@ function showLastCallers(int) {
 *****************************************************************/
 
 function logOff() {
+	console.clear();
     mystMenu('goodbye');
     bbs.exec('*D1LINER');
     bbs.logoff(); // interactive logoff procedure
@@ -1193,6 +1200,7 @@ function logOff() {
 }
 
 function logOffFast() {
+	console.clear();
     bbs.logoff(false); // non-interactive logoff procedure
     if (!bbs.online) {
         activity.hungup = '-';
