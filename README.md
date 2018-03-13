@@ -28,3 +28,11 @@ Recent changes:
 * Cleaned up my Incredibly Terrible code a bit - is now merely Really Terrible.
 * Streamlined menu options - it's very likely some options are missing on the menus or vice versa.
 * Separated settings and functions into different files so that I can further separate rumors and automsg into their own mods.
+
+Installation:
+
+other than placing the menu files in /sbbs/text/menu/mystique and the .js files in /sbbs/mods/ you'll need to edit json-service.ini and add this:
+
+[mystique]
+dir=../mods/
+
