@@ -21,7 +21,7 @@ Recent changes:
 I've been working on the shell locally off and on, just haven't been pushing changes.
 
 * Reworking of last callers code. No longer using JSON database, I know it's rediculous that I keep changing my mind.
-* Moved fastlogin.js to login event. Wanted to avoid modifying core files like logon.js.
+* Moved fastlogin.js to login event. Wanted to avoid modifying core files like logon.js. Thank you DigitalMan for adding the option to turn off the built in last callers via modopts.ini
 * Turned a lot of really shitty code into just plain shitty code.
 * Streamlined some functions.
 * Currently working on using native SBBS functions instead of my redundant hackjobs, when possible.
