@@ -1,10 +1,10 @@
-Mystique Synchronet 3.16+ Command Shell
+Mystique Synchronet 3.17+ Command Shell
 
 This is still very much in development. You can see it in use on my BBS, capitolshrill.com.
 
 I'm writing this synchronet shell since I couldn't find a simple one that was written in js - they're mostly in BAJA and that prevented a lot of what I wanted to do. I'm pulling a lot of inspiration from various other BBS software.
 
-NOTE: At this time I am *not supporting* this shell in any way and I would not recommend using this on your board unless you wanted to mess with it. It shouldn't break anthing in particular though.
+NOTE: At this time I am *not officially supporting* this and I would not recommend using this on your board unless you wanted to mess with it. I really need documentation. It works and shouldn't break anything in particular though.
 
 I am working on making it more generic so others can use it.
 
@@ -16,6 +16,16 @@ Features:
 * setting overrides for sub themes (default font, colors, etc)
 
 Recent changes:
+
+11/18/19
+I've been working on the shell locally off and on, just haven't been pushing changes.
+
+* Reworking of last callers code. No longer using JSON database, I know it's rediculous that I keep changing my mind.
+* Moved fastlogin.js to login event. Wanted to avoid modifying core files like logon.js.
+* Turned a lot of really shitty code into just plain shitty code.
+* Streamlined some functions.
+* Currently working on using native SBBS functions instead of my redundant hackjobs, when possible.
+
 3/9/2018:
 * Reverted back to using JSON database for lastx callers. I decided I wanted more display flexibility across themes.
 * Thanks to eChicken and mcmlxxix for help with the JSON db coding.
@@ -31,8 +41,9 @@ Recent changes:
 
 Installation:
 
-other than placing the menu files in /sbbs/text/menu/mystique and the .js files in /sbbs/mods/ you'll need to edit json-service.ini and add this:
+Place the menu files in /sbbs/text/menu/mystique
+Place the .bin and .js files in /sbbs/mods/
 
-[mystique]
-dir=../mods/
+More to come!
+
 
