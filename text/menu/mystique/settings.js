@@ -23,4 +23,4 @@
 //conf.amsgGreetz	= '@RIGHT:30@\1h\1mg \1n\1mr e e t z \1hf \1n\1mr o m\1w: \1h\1c-\1n\1c';
 //conf.amsgPrefi	= '@RIGHT:10@\1h\1b';
 //conf.fontcode 	= '437'; // 437, topaz, pot-noodle, microknight, mosoul
-conf.useDefDoors	= 0
+//conf.useDefDoors	= 0

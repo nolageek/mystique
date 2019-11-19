@@ -1,26 +1,15 @@
 load("sbbsdefs.js");
-load("functions.js")
+
+	c_txt 		= '\1h\1b'; 
+	c_txt2 	= '\1h\1m';
+	c_sym 		= '\1h\1k';
+	c_sym2 		= '\1h\1w';
+	
+var conf = [];
+	conf.rumorsNum = 6;
 
 var param = argv[0];
-var ansiDir = user.command_shell + '\\';
-var rumorHeader	= 'rumor-h';
-var rumorFooter	= 'footer';
 var rumorFile 	= system.mods_dir + '\\rumor.txt';
-
-var color = {
-							// MENU STRING COLORS
-	txt_menu	: '\1h\1b', // menu name
-	txt_user 	: '\1h\1c', // username in menus 
-	txt_sym 	: '\1n\1b', // symbols color @, [ ], ( ),etc..
-	txt_sym2 	: '\1h\1c', // symbol highlght (numbers in [1], menu options [A], etc..)
-	txt_text 	: '\1h\1b', // color for most text
-	txt_text2 	: '\1h\1m', // aux color for text, bold words, values, etc...
-	txt_ques 	: '\1h\1y', // color for question prompts
-	txt_alert 	: '\1h\1r', // color for alert text
-	txt_success	: '\1h\1g', // color for success text
-	txt_info 	: '\1h\1c', // color for info text
-}
-
 
 if (param == 'addrumor') {
 	addRumor();
@@ -38,39 +27,40 @@ function showRumor() {
 	var all = f.readAll();
 	f.close();
 	var rumor = all[Math.floor(Math.random()*all.length)];
-	console.putmsg(rumor);
+	console.putmsg(' \1n\1mrumor: \1n\1w[' + rpad(rumor,75) + '\1n\1w]');
 }
 
 function addRumor() {
 	console.clear();
-	bbs.menu(ansiDir + rumorHeader);
-	console.printtail(rumorFile,12);
-	bbs.menu(ansiDir + rumorFooter);
-	console.gotoxy(1,22);
+	findHeader('rumor-h');
+	console.putmsg(c_txt);
+	console.printtail(rumorFile,conf.rumorsNum);
+	findHeader('rumor-f');
+	console.gotoxy(2,22);
 
-	console.gotoxy(1,23);
-	console.putmsg(color.txt_text + 'Enter new rumor ' + color.txt_sym + '[' + color.txt_sym2 + 'RET' + color.txt_sym + '] ' + color.txt_text + 'quits:\1n');
-	console.gotoxy(1,24);
+	console.gotoxy(2,23);
+	console.putmsg(c_txt + 'Enter new rumor ' + c_sym + '[' + c_sym2 + 'RET' + c_sym + '] ' + c_txt + 'quits:\1n');
+	console.gotoxy(2,24);
 	console.putmsg(':');
-	var rumor = console.getstr("", 77);
+	var rumor = console.getstr("", 70);
 	if (rumor == null || rumor == "" || rumor =="q" || rumor =="quit") return;
 	else customizeRumor(rumor);
 }
 
 function customizeRumor(rumor) {
 	
-	var fgarray = {1:"\1w",2:"\1y",3:"\1r",4:"\1h\1b",5:"\1g",6:"\1m",7:"\1h\1y",8:"\1h\1m"};
+	var fgarray = {1:"\1n\1w",2:"\1n\1y",3:"\1n\1r",4:"\1h\1b",5:"\1n\1g",6:"\1n\1m",7:"\1h\1y",8:"\1h\1m"};
 	var bgarray = {10:"\0010",11:"\0016",12:"\0012",13:"\0015",14:"\0014",15:"\0013",16:"\0011"};
-	var rumor = (rpad(rumor,77));
-	console.gotoxy(1,23);
-	
-	console.putmsg(color.txt_text + 'Pimp Your Rumor: ' + color.txt_sym + '[' + color.txt_sym2 + 'UP' + color.txt_sym + '/' + color.txt_sym2 + 'DOWN' + color.txt_sym + ']' + color.txt_text + ':' + color.txt_text2 + 'FG' + color.txt_sym + '   [' + color.txt_sym2 + 'LEFT' + color.txt_sym + '/' + color.txt_sym2 + 'RIGHT' + color.txt_sym  +']' + color.txt_text + ':' + color.txt_text2 + 'BG' + color.txt_sym + '   [' + color.txt_sym2 + 'RET' + color.txt_sym + ']' + color.txt_text + ':' + color.txt_text2 + 'Accept' + color.txt_sym + '   [' + color.txt_sym2 + 'Q' + color.txt_sym + ']' + color.txt_text + ':' + color.txt_text2 + 'Quit');
-	console.gotoxy(1,24);
-	console.putmsg('\10\1n\1w [' + rumor + '\10\1n\1w]')
-	
 	var fg = 1;
 	var bg = 10;
+	//var rumor = (rpad(rumor,70));
+
 	
+	console.gotoxy(1,23);
+	
+	console.putmsg(c_txt + 'Pimp Your Rumor: ' + c_sym + '[' + c_sym2 + 'UP' + c_sym + '/' + c_sym2 + 'DN' + c_sym + ']' + c_txt + ':' + c_txt2 + 'FG' + c_sym + '   [' + c_sym2 + 'LFT' + c_sym + '/' + c_sym2 + 'RT' + c_sym  +']' + c_txt + ':' + c_txt2 + 'BG' + c_sym + '   [' + c_sym2 + 'RET' + c_sym + ']' + c_txt + ':' + c_txt2 + 'Accept' + c_sym + '   [' + c_sym2 + 'Q' + c_sym + ']' + c_txt + ':' + c_txt2 + 'Quit');
+	console.gotoxy(1,24);
+	console.putmsg(' rumor: \10\1n\1w [' + rumor + '\10\1n\1w]')
 	
 	var accepted = false;
 	
@@ -83,8 +73,10 @@ function customizeRumor(rumor) {
 			else fg = fg +1;
 			console.gotoxy(1,24);
 			console.clearline();
-			var styled = '\10\1n\1w[' + bgarray[bg] + fgarray[fg] + rumor + '\10\1n\1w]';
+			console.putmsg('\10\1n\1w [');
+			var styled = bgarray[bg] + fgarray[fg] + rumor;
 			console.putmsg(styled);
+			console.putmsg('\10\1n\1w]');
 			break;
 		case KEY_DOWN:
 		case 'S': 
@@ -92,8 +84,10 @@ function customizeRumor(rumor) {
 			else fg = fg -1;
 			console.gotoxy(1,24);
 			console.clearline();
-			var styled = '\10\1n\1w[' + bgarray[bg] + fgarray[fg] + rumor + '\10\1n\1w]';
+			console.putmsg('\10\1n\1w [');
+			var styled = bgarray[bg] + fgarray[fg] + rumor;
 			console.putmsg(styled);
+			console.putmsg('\10\1n\1w]');
             break;
 		case KEY_LEFT:
         case 'A': 
@@ -101,8 +95,10 @@ function customizeRumor(rumor) {
 			else bg = bg -1;
 			console.gotoxy(1,24);
 			console.clearline();
-			var styled = '\10\1n\1w[' + bgarray[bg] + fgarray[fg] + rumor + '\10\1n\1w]';
+			console.putmsg('\10\1n\1w [');
+			var styled = bgarray[bg] + fgarray[fg] + rumor;
 			console.putmsg(styled);
+			console.putmsg('\10\1n\1w]');
             break;
 		case KEY_RIGHT:
         case 'D': 
@@ -110,8 +106,10 @@ function customizeRumor(rumor) {
 			else bg = bg +1;
 			console.gotoxy(1,24);
 			console.clearline();
-			var styled = '\10\1n\1w[' + bgarray[bg] + fgarray[fg] + rumor + '\10\1n\1w]';
+			console.putmsg('\10\1n\1w [');
+			var styled = bgarray[bg] + fgarray[fg] + rumor;
 			console.putmsg(styled);
+			console.putmsg('\10\1n\1w]');
             break;
 		case 'Q':
 			accepted = true;
@@ -119,7 +117,7 @@ function customizeRumor(rumor) {
 			console.pause();
 			break;
 		case "\r":
-			var styled = '\10\1n\1w [' + bgarray[bg] + fgarray[fg] + rumor + '\10\1n\1w]';
+			var styled = bgarray[bg] + fgarray[fg] + rumor;
 			f = new File(rumorFile)
 			if (!f.open("a")) {
 			alert("Error opening file: " + rumorFile);
@@ -133,7 +131,7 @@ function customizeRumor(rumor) {
 			console.clearline();
 			console.gotoxy(1,24);
 			console.clearline();
-			console.center(color.txt_success + 'Saved.\1n');
+			console.center(c_success + 'Saved.\1n');
 			console.crlf();
 			console.pause();
 			accepted = true;
@@ -144,14 +142,28 @@ function customizeRumor(rumor) {
 	}
 }
 
-//pads right
+function findHeader(file) {
+    // checks current command_shell dir for file name, if doesn't exist, use mod dir. assign to ansiDir
+    var ansiDir = user.command_shell + '\\';
+    if (!file_exists(ansiDir + file + '.ans') && !file_exists(ansiDir + file + '.asc')) {
+        var ansiDir = 'rumors\\'
+    }
+
+   // var random_list = directory(ansiDir + file + "*.*") //returns an array of filenames from ansiDir
+    //if (random_list.length) { //if there are files in the directory
+        bbs.menu(ansiDir + file);
+		//console.putmsg(ansiDir + file)
+        // displays random file from array.
+	//	}
+}
+
 function rpad(str, length, padString) {
-	if (!padString)
-			var padString = ' ';
-	if (str > length)
-		var str = str.substring(0, length);
+    if (!padString)
+            var padString = ' ';
+    if (str.length > length)
+        str = str.substring(0, length);
     while (str.length < length)
-        var str = str + padString;
-		
+        str = str + padString;
+        
     return str;
 }

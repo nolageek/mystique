@@ -1,15 +1,17 @@
 load('sbbsdefs.js');
+load('functions.js');
 
 var amsgFile = system.mods_dir + '\automsg.txt';
-var greetz = '@RIGHT:30@\1h\1mg \1n\1mr e e t z \1hf \1n\1mr o m\1w: \1h\1c-\1n\1c';
+//var greetz = '\1h\1mg \1n\1mr e e t z\1w:\r\n';
 var prefix = '@RIGHT:10@\1h\1b';
 	
 	
 function autoMsg() {
 	console.clear();
 	bbs.menu(user.command_shell + '/automsg-h');
-	console.printtail(amsgFile,6);
 	console.crlf();
+	console.printtail(amsgFile,9);
+	console.crlf(2);
 	bbs.menu(user.command_shell + '/automsg-f');
 	console.crlf(2);
 
@@ -32,16 +34,22 @@ function autoMsg() {
 		return;
 	case 'Y':
 	case "\r":
+	console.putmsg(amsg1.length);
+	console.pause();
 		f = new File(amsgFile)
 		if (!f.open("w")) {
 			alert("Error opening file: " + amsgFile);
 			return;
 		}
 			//f.writeln(amsg);
-			f.write('\r\n' + prefix + amsg1);
-			f.write('\r\n' + prefix + amsg2);
-			f.write('\r\n' + prefix + amsg3);
-			f.write('\r\n\r\n' + greetz + uname);
+			
+			f.write("@RIGHT:" + (79 - amsg1.length)/2 + "@" + amsg1 + "\r\n");
+			f.write("@RIGHT:" + (79 - amsg2.length)/2 + "@" + amsg2 + "\r\n");
+			f.write("@RIGHT:" + (79 - amsg3.length)/2 + "@" + amsg3 + "\r\n");
+			f.write("\r\n");
+			f.write("\r\n");
+			//f.write("@RIGHT:" + (79 - 12)/2 + "@\1h\1b" + greetz);
+			f.write("@RIGHT:" + (79 - uname.length)/2 + "@\1h\1m" + uname);
 			f.close();
 			console.center('\1h\1rSaved. \1n\1w\r\n');
 			console.pause();

@@ -1,2 +1,7 @@
-[0;40;37m[21C[1;35mn[30mewuser [35ms[30mhell [35md[30moors [35mr[30meadmsg [35mp[30mostmsg [35mg[30mfiles [35mf[30meedback [35mh[30mungup
-[32mßß[0;42;30mÜÜ[1;40;32mßßßßßß[0;42;30mÜÜ[1;40;32mß[0;42;30mÜÜÜÜ[1;40;32mß[0;42;30mÜ[1;40;32mß[0;42;30mÜÜ[1;40;32mßßßßßßßßßßßßßß[0mß[1;32mßßßß[0mßß[1;32mßßß[0mßßß[1;32mßß[0mßßßß[1;32mß[0mßßßßß ß  ß   ß   ß
+[0;40;37m
+[30m[18C[1;34mn[30mewuser [34mp[30mostmsg [34mr[30meadmsg [34mf[30meedback [34mt[30mfiles [34md[30moors [34me[30mmail [34mh[30mungup
+
+   Current Date[37m------>[34m@DATE-L14@[7C@STATS.LOGONS-R14@[37m<-------[30mCalls Total
+   Current Time[37m------>[34m@TIME-L14@[7C@STATS.LTODAY-R14@[37m<-------[30mCalls Today
+   Current Node[37m------>[34m@NODE-L3@[37m/  [34m@TNODE-L16@@CALLS-R13@[37m<----[30mUr Calls Total
+   You Are[37m----------->[34m@USERNUM-L3@[37m/ [34m@TUSER-R3@@SINCE-R27@[37m<-----[30mUr First call
