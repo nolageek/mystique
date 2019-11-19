@@ -175,7 +175,7 @@ function msgMenu() {
                 // SELECT GROUPS/SUBS
             case 'G':
             case 'J':
-                mystMenu("437");
+                mystMenu(conf.fontcode);
                 bbs.exec('?DDMsgAreaChooser.js');
                 break;
                 // READ NEW MESSAGES IN CURRENT GROUP
@@ -207,7 +207,7 @@ function msgMenu() {
                 break;
                 // POST NEW MESSAGE IN CURRENT GROUP
             case 'P':
-                mystMenu("437");
+                mystMenu(conf.fontcode);
                 bbs.post_msg(msg_area.grp_list[bbs.curgrp].sub_list[bbs.cursub].code);
                 break;
                 // SCAN FOR NEW MESSAGES
