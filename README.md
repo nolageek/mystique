@@ -4,7 +4,7 @@ This is still very much in development. You can see it in use on my BBS, capitol
 
 I'm writing this synchronet shell since I couldn't find a simple one that was written in js - they're mostly in BAJA and that prevented a lot of what I wanted to do. I'm pulling a lot of inspiration from various other BBS software.
 
-NOTE: At this time I am *not officially supporting* this and I would not recommend using this on your board unless you wanted to mess with it. I really need documentation. It works and shouldn't break anything in particular though.
+NOTE: At this time I am *not officially supporting* this and I would not recommend using this on your board unless you wanted to mess with it. It works and shouldn't break anything in particular though.
 
 I am working on making it more generic so others can use it.
 
