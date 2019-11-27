@@ -6,7 +6,7 @@ I'm writing this synchronet shell since I couldn't find a simple one that was wr
 
 NOTE: At this time I am *not officially supporting* this and I would not recommend using this on your board unless you wanted to mess with it. It works and shouldn't break anything in particular though.
 
-I am working on making it more generic so others can use it.
+I am working on making it more generic so others can use it. The default menu screens are awful, I know.
 
 Features: 
 
