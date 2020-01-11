@@ -5,13 +5,13 @@ load("settings.js");
 
 
 function mystMenu(file) {
-    // checks current command_shell dir for file name, if doesn't exist, use mystique dir. assign to ansiDir
-    var ansiDir = user.command_shell + '\\';
-    if (!file_exists('c:\\sbbs\\text\\menu\\' + ansiDir + file + '.ans') && !file_exists('c:\\sbbs\\text\\menu\\' + ansiDir + file + '.asc')) {
-        var ansiDir = 'mystique\\';
-    }
-
-		
+     //checks current command_shell dir for file name, if doesn't exist, use mystique dir. assign to ansiDir
+    var ansiDir = system.text_dir + 'menu\\' + user.command_shell + '\\';
+    if (!file_exists(ansiDir + file + '.ans') && !file_exists(ansiDir + file + '.asc')) {
+        var ansiDir = system.text_dir + 'menu\\mystique\\';
+	}
+	
+//console.putmsg(ansiDir + file); console.pause();	
     var random_list = directory(ansiDir + '\\' + file + "*.*") //returns an array of filenames from ansiDir
     if (random_list.length) { //if there are files in the directory
         bbs.menu(ansiDir + file_getname(random_list[random(random_list.length)]).slice(0, -4));
@@ -96,6 +96,21 @@ function mystHeader(file) {
 		if (!file_exists(system.text_dir + '\menu\\' + user.command_shell + "\\" + file + ".ans")) 
 		file = "header";
 		mystMenu(file);
+}
+
+function mystPrompt(menuname) {
+		var menuName = menuname;
+		if (menuName == "Messages"){
+		console.gotoxy(2,23);
+		console.putmsg(bracket('@GN@') + '@GRP@ ' + bracket('@SN@') + color.t_menu + '@SUBL@\1n');
+		}
+		if (menuName == "Files"){
+		console.gotoxy(2,23);
+		console.putmsg(bracket('@LN@') + color.t_user + '@LIB@ ' + bracket('@DN@') + color.t_menu + '@DIRL@\1n');
+		}
+		//console.crlf();
+		console.gotoxy(2,24);
+        console.putmsg(color.t_user + user.alias + color.t_sym + '@' + color.t_menu + menuName + ' Menu' + color.t_sym + ' >' + color.t_menu + '>' + color.t_sym2 + '> \1n');
 }
 
 function bracket(string) {

@@ -1,6 +1,9 @@
 load("sbbsdefs.js"); // load helper functions
 var settingsFile = system.text_dir + 'menu\\' + user.command_shell + '\\settings.js';
 var langFile = system.text_dir + 'menu\\' + user.command_shell + '\\lang.js';
+var DDconfig = "";
+	if (file_exists('../xtrn/DDMsgReader/' + user.command_shell + '-DDMsgReader.cfg'))
+	DDconfig = " -configFilename=" + user.command_shell + "-DDMsgReader.cfg";
 
 // SET DEFAULT VALUES
 // set up default colors; in case no theme settings.js file is found.
@@ -14,7 +17,7 @@ var color = [];
     color.t_txt2  = '\1n\1c'; // aux color for text; bold words; values; etc...
     color.t_ques  = '\1h\1r'; // color for question prompts
     color.t_alert     = '\1h\1r'; // color for alert text
-    color.t_yes   = '\1h\1g'; // color for success text
+    color.t_yes   = '\12\1n\1k'; // color for success text
     color.t_info  = '\1n\1c'; // color for info text
                             // DEFAULTS PAGE COLORS
     color.d_txt  = '\1h\1b'; // defaults option text
@@ -74,11 +77,11 @@ bbs.replace_text(96,color.t_ques + "Are you sure");
 bbs.replace_text(119,color.t_info + "Log off");
 bbs.replace_text(156,color.t_ques + "I'm sorry, did you forget something?\r\n");
 bbs.replace_text(369,color.t_ques + "Does your terminal support IBM extended ASCII");
-bbs.replace_text(338,quesBox + color.t_txt + " Enter your alias or full name" + color.t_sym2 + ": " + color.d_value);
-bbs.replace_text(370,warnBox + color.t_txt + " You can't use that name (duplicate or invalid).\r\n");
-bbs.replace_text(346,quesBox + color.t_txt + " Enter your location or public note" + color.t_sym2 + ": " + color.d_value);
-bbs.replace_text(345,quesBox + color.t_txt + " Enter your birthday (%s)" + color.t_sym2 + ": " + color.d_value);
-bbs.replace_text(500,quesBox + color.t_txt + " Network mail address (Example= user@domain)" + color.t_sym2 + ": " + "\r\n" + color.t_info + "    This may be used for password recovery" + color.d_value + "\r\n ");
+bbs.replace_text(338,"@CLS@@MENU:newuser@@GOTOXY:3,18@" + color.t_txt + "Enter your alias or full name" + color.t_sym2 + ": " + color.d_value);
+bbs.replace_text(370,"@GOTOXY:3,23@" + color.t_txt + "You can't use that name (duplicate or invalid).");
+bbs.replace_text(346,"@GOTOXY:3,19@" + color.t_txt + "Enter your location, afiliation, or public note" + color.t_sym2 + ": " + color.d_value);
+bbs.replace_text(345,"@GOTOXY:3,20@" + color.t_txt + "Enter your birthday (@DATEFMT@)" + color.t_sym2 + ": " + color.d_value);
+bbs.replace_text(500,"@GOTOXY:3,21@" + color.t_txt + "Network mail address" + color.t_sym + " (Example: user@domain)" + color.t_sym2 + ": " + "\r\n" + color.t_info + "  This may be used for password recovery" + color.d_value + "\r\n  ");
 bbs.replace_text(499,color.t_txt2 + "Forward personal e-mail to network mail address");
 bbs.replace_text(350,color.t_ques + "Is the above information correct");
 bbs.replace_text(331,color.t_ques + " Enter a different password");
@@ -101,13 +104,17 @@ bbs.replace_text(343,quesBox + color.t_txt + " Enter your street address= \1w");
 bbs.replace_text(344,quesBox + color.t_txt + " Enter your voice phone number= \1w");
 bbs.replace_text(347,quesBox + color.t_txt + " Enter your zip (or postal) code= \1w");
 bbs.replace_text(362,color.t_txt + "Read your mail now");
+bbs.replace_text(563,color.t_sym + "@GOTOXY:1,25@[" + color.t_txt + "pause" + color.t_sym2 + "/" + color.t_txt2 + "press any key" + color.t_sym + "]");
 
 bbs.replace_text(497,quesBox + color.t_txt + "How many rows on your monitor [\1wAuto Detect\1y]= ");
-bbs.replace_text(563,color.t_sym + " [" + color.t_sym2 + "P" + color.t_txt2 + "AUSE" + color.t_sym + "/" + color.t_menu + "HIT A KEY" + color.t_sym + "]");
+//bbs.replace_text(563,color.t_sym + " [" + color.t_sym2 + "p" + color.t_txt2 + "ause" + color.t_sym + "/" + color.t_menu + "press any key" + color.t_sym + "]");
+
 bbs.replace_text(570,"\r\n " + color.t_user + user.alias + color.t_sym + '@' + color.t_menu + "QWK" + color.t_sym + ": \1n");
 bbs.replace_text(660,"@EXEC:DDFLIST@");
 bbs.replace_text(661,"@EXEC:DDFL_HDR@");
-
+bbs.replace_text(694," Node Status:\r\n --- ---------------------------------------------------\r\n\1n");
+bbs.replace_text(811,quesBox + color.t_txt + " HIT your " + color.t_sym2 + "BACKSPACE" + color.t_txt +" or " + color.t_sym2 + "DELETE-LEFT" +color.t_txt + " key: "); 
+bbs.replace_text(826,"\15\1n\1hLogging on to @BBS@ as @ALIAS@ @ELLIPSIS@\1n\r\n @RESETPAUSE@");
 if (file_exists(langFile)) {
     load(langFile);
 }

@@ -4,6 +4,7 @@ load("sbbsdefs.js");
 	c_txt2 	= '\1h\1m';
 	c_sym 		= '\1h\1k';
 	c_sym2 		= '\1h\1w';
+	c_success	= '\1f\1g';
 	
 var conf = [];
 	conf.rumorsNum = 6;
@@ -53,14 +54,14 @@ function customizeRumor(rumor) {
 	var bgarray = {10:"\0010",11:"\0016",12:"\0012",13:"\0015",14:"\0014",15:"\0013",16:"\0011"};
 	var fg = 1;
 	var bg = 10;
-	//var rumor = (rpad(rumor,70));
+	var rumor = (rpad(rumor,70));
 
 	
 	console.gotoxy(1,23);
 	
 	console.putmsg(c_txt + 'Pimp Your Rumor: ' + c_sym + '[' + c_sym2 + 'UP' + c_sym + '/' + c_sym2 + 'DN' + c_sym + ']' + c_txt + ':' + c_txt2 + 'FG' + c_sym + '   [' + c_sym2 + 'LFT' + c_sym + '/' + c_sym2 + 'RT' + c_sym  +']' + c_txt + ':' + c_txt2 + 'BG' + c_sym + '   [' + c_sym2 + 'RET' + c_sym + ']' + c_txt + ':' + c_txt2 + 'Accept' + c_sym + '   [' + c_sym2 + 'Q' + c_sym + ']' + c_txt + ':' + c_txt2 + 'Quit');
 	console.gotoxy(1,24);
-	console.putmsg(' rumor: \10\1n\1w [' + rumor + '\10\1n\1w]')
+	console.putmsg('\10\1n\1w [' + rumor + '\10\1n\1w]')
 	
 	var accepted = false;
 	

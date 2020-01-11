@@ -33,15 +33,16 @@ mystMenu('437');
 randomANSIslow("logon","1"); // cap shrill ansi
 
 mystMenu('437');
-randomANSIslow("logon","2"); // game/network promo
+randomANSIslow("logon","2"); // network promo
 
 mystMenu('437');
-bbs.exec("*oneliner"); // by MrO
+randomANSIslow("logon","3"); // game promo
+
+mystMenu('437');
+bbs.exec("*oneliners"); // not by MrO
 
 mystMenu(conf.fontcode);	
 bbs.exec_xtrn("ONELIN3R"); // networked ones
-//bbs.exec_xtrn("SYNCWXR"); // Weather
-// WU API has been cancelled
 
 // Auto-message
 mystMenu(conf.fontcode);
@@ -49,7 +50,14 @@ bbs.exec('*automsg');
 
 console.clear();
 
-bbs.exec("?/sbbs/xtrn/bullshit/bullshit.js bulletins");
-console.crlf(2);
+var n = new File("/sbbs/data/subs/notices.hash")
+var u = user.stats.laston_date
+if (u < n.date ){
+ bbs.exec("?/sbbs/xtrn/bullshit/bullshit.js bulletins");
+} else {
+	console.putmsg(     "\0012\1kNo new bulletins.\0010\1n\1w\r\n")
+}
+
+
 
 	} 

@@ -4,9 +4,9 @@
                        
 ----------------------------------------------------------------------------*/
 load("sbbsdefs.js"); // load helper functions
-load("dd_lightbar_menu.js");
 load("functions.js");
 load("settings.js");
+
 //load('fonts.js', "437");
 
 // Load (fontcode).ans from selected menu set directory, reset the font to 437 or amiga.
@@ -15,12 +15,17 @@ mystMenu(conf.fontcode); // reset font type
 // Get current shell code, to check later in case of settings change.
 var thisShell = user.command_shell;
 
+var DDconfig = "";
+	if (file_exists('../xtrn/DDMsgReader/' + user.command_shell + '-DDMsgReader.cfg'))
+	DDconfig = " -configFilename=" + user.command_shell + "-DDMsgReader.cfg";
+
 js.on_exit('lastCaller()'); // generate last caller entry if disconnected
 
 // activity will be posted to last caller list by default
 var activity = [];
 
-console.putmsg(color.t_info + 'Loading ' + system.name + ' Command Shell..' + color.t_yes + thisShell.toUpperCase() + ' Loaded!\r\n\r\n');
+console.putmsg(color.t_info + 'Loading ' + system.name + ' Command Shell..' + color.t_yes + thisShell.toUpperCase() + ' Loaded!');
+console.crlf(2);
 sleep(500);
 
 bbs.timeout_warn = 180; //180 second default timeout warning
@@ -51,8 +56,7 @@ function mainMenu() {
         console.clear();
         mystMenu(conf.fontcode); // reset font type
         mystMenu('main');
-		console.gotoxy(2,24);
-        console.putmsg(color.t_user + user.alias + color.t_sym + '@' + color.t_menu + 'Main Menu' + color.t_sym + ': \1n');
+		mystPrompt('Main');
 
         //options and commands to perform
         var key = console.getkey(K_NOECHO).toUpperCase();
@@ -60,22 +64,20 @@ function mainMenu() {
 
         switch (key) {
             // MAIN OPTIONS
-            case 'M':
-                msgMenu();
-                break;
-            case 'E':
-                emailMenu();
-                break;
             case 'C':
 				chatMenu();
                  break;
-            case 'T':
             case 'G':
+            case 'T':
 				activity.gfiles = 'T';
-                bbs.exec_xtrn('TEXTFILE');
+                //bbs.exec_xtrn('TEXTFILE');
+					bbs.text_sec();
                 break;
-            case 'S':
+			case 'M':
+                msgMenu();
+                break;
             case 'I':
+            case 'S':
                 systemMenu();
                 break;
             case 'X':
@@ -83,35 +85,31 @@ function mainMenu() {
                 break;
                 // OTHER OPTIONS
             case '1':
-                bbs.exec('*oneliner');
-                break;
-            case 'Q':
-			mystMenu("qwk");
-                bbs.qwk_sec();
+                bbs.exec('*oneliners');
                 break;
             case 'A':
                 bbs.exec("*automsg")
                 break;
-            case 'R':
-                bbs.exec('*rumors addrumor');
-                break;
-                // SOME POPULAR 'HIDDEN' ITEMS (NOT ON MENU)    
             case 'D':
                 defaults();
                 break;
+			case 'R':
+                bbs.exec('*rumors addrumor');
+                break;
+                // SOME POPULAR 'HIDDEN' ITEMS (NOT ON MENU)    
             case 'F':
                 filemenu();
                 break;
             case 'W':
                 mystHeader('online');
-                bbs.list_nodes()
+                bbs.list_nodes();
                 break;
             case 'L':
                 bbs.exec('*lastcallers.js');
                 break;
             case '/': // SLASH MENU
                 console.putmsg('/');
-                slashMenu(console.getkeys('?ACDTSGXO').toUpperCase());
+                slashMenu(console.getkeys('?ACDTSGQXO',1));
                 break;
             case ';': // SYSOP MENU
             case '.':
@@ -125,6 +123,9 @@ function mainMenu() {
             case 'O': // LOGOFF
                 logOff();
                 break;
+			case '!':
+				logOffFast();
+				break;
             default: // FALL BACK
                 break;
         } // end switch
@@ -138,11 +139,7 @@ function msgMenu() {
         console.clear();
         mystMenu(conf.fontcode);
         mystMenu('mesg');
-		console.gotoxy(2,23);
-        console.putmsg(bracket('@GN@') + bracket('@GRP@') + bracket('@SN@') + color.t_menu + '@SUBL@\1n');
-        console.crlf();
-		console.gotoxy(2,24);
-        console.putmsg(color.t_user + user.alias + color.t_sym + '@' + color.t_menu + 'Message Menu' + color.t_sym + ': \1n');
+		mystPrompt('Messages');
 
         var key = console.getkey(K_NOECHO).toUpperCase();
         bbs.log_key(key);
@@ -173,10 +170,13 @@ function msgMenu() {
                 if (bbs.lastsub == bbs.cursub) bbs.cursub = msg_area.grp_list[bbs.curgrp].sub_list.length - 1;
                 break;
                 // SELECT GROUPS/SUBS
+            case 'E':
+                emailMenu();
+                break;
             case 'G':
             case 'J':
-                mystMenu("437");
-                bbs.exec('?DDMsgAreaChooser.js');
+                mystMenu(conf.fontcode);
+                bbs.exec('?../xtrn/DDMsgReader/DDMsgReader.js -chooseAreaFirst' + DDconfig);
                 break;
                 // READ NEW MESSAGES IN CURRENT GROUP
 			case 'I':
@@ -184,11 +184,12 @@ function msgMenu() {
                 bbs.sub_info();
                 break;
             case 'L':
-                if (file_exists('../xtrn/DDMsgReader/DDMsgReader.js')) {
-                    bbs.exec('?../xtrn/DDMsgReader/DDMsgReader.js -startMode=list');
+				mystMenu(conf.fontcode);
+				if (file_exists('../xtrn/DDMsgReader/DDMsgReader.js')) {
+                bbs.exec('?../xtrn/DDMsgReader/DDMsgReader.js -startMode=list' + DDconfig);
                 } else {
                     bbs.list_msgs();
-                }
+                } 
                 break;
             case 'R':
             case '\r':
@@ -196,9 +197,6 @@ function msgMenu() {
 				//bbs.exec("?msglist");
 				mystMenu(conf.fontcode);
 				if (file_exists('../xtrn/DDMsgReader/DDMsgReader.js')) {
-					var DDconfig = "";
-					if (file_exists('../xtrn/DDMsgReader/' + user.command_shell + '-DDMsgReader.cfg'))
-						DDconfig = " -configFilename=" + user.command_shell + "-DDMsgReader.cfg";
                     bbs.exec('?../xtrn/DDMsgReader/DDMsgReader.js' + DDconfig);
                 } else {
                     bbs.list_msgs();
@@ -207,7 +205,7 @@ function msgMenu() {
                 break;
                 // POST NEW MESSAGE IN CURRENT GROUP
             case 'P':
-                mystMenu("437");
+                mystMenu(conf.fontcode);
                 bbs.post_msg(msg_area.grp_list[bbs.curgrp].sub_list[bbs.cursub].code);
                 break;
                 // SCAN FOR NEW MESSAGES
@@ -239,13 +237,16 @@ function msgMenu() {
                 // SLASH AND COLON MENUS
             case '/': // FOR /F /N /R /J
                 console.putmsg('/');
-                slashMenu(console.getkeys('?DXOFNR').toUpperCase());
+                slashMenu(console.getkeys('?DXOFNQR',1));
                 break;
                 // QUIT
             case 'Q':
                 mainMenu();
                 return;
                 // LOG OUT
+			case '!':
+				logOffFast();
+				break;
             case 'O':
                 logOff();
                 break;
@@ -263,8 +264,9 @@ function scoresMenu() {
         console.clear();
         mystMenu(conf.fontcode);
         mystMenu('scores');
-		console.gotoxy(2,23);
-		console.putmsg(color.t_user + user.alias + color.t_sym + '@' + color.t_menu + 'Scores Menu' + color.t_sym + ': \1n');
+		mystPrompt('Scores');
+//		console.gotoxy(2,23);
+//		console.putmsg(color.t_user + user.alias + color.t_sym + '@' + color.t_menu + 'Scores Menu' + color.t_sym + ': \1n');
         var key = console.getkey(K_NOECHO).toUpperCase();
         bbs.log_key(key);
         switch (key) {
@@ -311,8 +313,9 @@ function systemMenu() {
         console.clear();
         mystMenu(conf.fontcode);
         mystMenu('system');
-		console.gotoxy(2,24);
-        console.putmsg(color.t_user + user.alias + color.t_sym + '@' + color.t_menu + 'System Menu' + color.t_sym + ': \1n');
+		mystPrompt('System');
+		//console.gotoxy(2,24);
+        //console.putmsg(color.t_user + user.alias + color.t_sym + '@' + color.t_menu + 'System Menu' + color.t_sym + ': \1n');
 
         var key = console.getkey(K_NOECHO).toUpperCase();
         bbs.log_key(key);
@@ -329,6 +332,7 @@ function systemMenu() {
                 break;
             case 'W':
                 mystHeader('online');
+				bbs.list_nodes();
                 break;
             case 'L':
                 bbs.exec('*lastcallers.js');
@@ -362,8 +366,9 @@ function chatMenu() {
         bbs.nodesync()
         console.clear();
         mystMenu('chat');
-		console.gotoxy(2,24);
-        console.putmsg(color.t_user + user.alias + color.t_sym + '@' + color.t_menu + 'Chat Menu' + color.t_sym + ': \1n');
+		mystPrompt('Chat');
+		//console.gotoxy(2,24);
+        //console.putmsg(color.t_user + user.alias + color.t_sym + '@' + color.t_menu + 'Chat Menu' + color.t_sym + ': \1n');
         var key = console.getkey(K_NOECHO).toUpperCase();
         bbs.log_key(key);
         switch (key) {
@@ -429,7 +434,6 @@ function chatMenu() {
                 break;
 
             case 'Q':
-                return;
             case '\r':
                 return;
 
@@ -448,14 +452,20 @@ function emailMenu() {
         bbs.nodesync();
         console.clear();
         mystMenu('mail');
-		console.gotoxy(2,24);
-        console.putmsg(color.t_user + user.alias + color.t_sym + '@' + color.t_menu + 'Email Menu' + color.t_sym + ':\1n');
+		mystPrompt('Email')
+		//console.gotoxy(2,24);
+        //console.putmsg(color.t_user + user.alias + color.t_sym + '@' + color.t_menu + 'Email Menu' + color.t_sym + ':\1n');
         //options and commands to perform
         var key = console.getkey(K_NOECHO).toUpperCase();
         bbs.log_key(key);
         switch (key) {
             case 'R':
-                bbs.exec('?../xtrn/DDMsgReader/DDMsgReader.js -personalEmail -startMode=list');
+				if (file_exists('../xtrn/DDMsgReader/DDMsgReader.js')) {
+                    bbs.exec('?../xtrn/DDMsgReader/DDMsgReader.js -personalEmail -startMode=list' + DDconfig);
+                } else {
+                    bbs.read_mail();
+                } 
+                
                 break;
             case 'S':
                 bbs.node_action = NODE_SMAL;
@@ -477,15 +487,19 @@ function emailMenu() {
             case 'O':
                 bbs.node_action = NODE_RSML;
                 bbs.nodesync();
-                bbs.exec('?../xtrn/DDMsgReader/DDMsgReader.js -personalEmailSent -startMode=list');
+					if (file_exists('../xtrn/DDMsgReader/DDMsgReader.js')) {
+                    bbs.exec('?../xtrn/DDMsgReader/DDMsgReader.js -personalEmailSent -startMode=list' + DDconfig);
+                } else {
+                    bbs.read_mail(which=MAIL_SENT);
+                } 
                 break;
             case 'F':
                 console.clear();
-                console.ungetstr('Feedback');
-                bbs.email(1, null, null, '');
+//                console.ungetstr('Feedback');
+                bbs.email(1,subject='Feedback');
                 break;
             case 'Q':
-                mainMenu();
+                msgMenu();
                 break;
             case 'O':
                 logoffMenu();
@@ -590,8 +604,8 @@ while (bbs.online) {
             console.gotoxy(1, 22);
             console.putmsg(bracket('Q') + color.d_txt + 'uit. ' + bracket('ARROWS' + color.t_sym + ',' + color.t_sym2 + '#') + color.d_txt + 'To Switch Pages.');
             console.crlf(2);
-
-            console.putmsg(color.t_user + user.alias + color.t_sym + '@' + color.t_menu + 'Defaults Menu' + color.t_sym + ': \1n');
+			mystPrompt('Defaults');
+            //console.putmsg(color.t_user + user.alias + color.t_sym + '@' + color.t_menu + 'Defaults Menu' + color.t_sym + ': \1n');
             var key = console.getkey(K_NOECHO).toUpperCase();
             bbs.log_key(key);
             switch (key) {
@@ -871,10 +885,7 @@ function xferMenu() {
         console.clear();
         mystMenu(conf.fontcode);
         mystMenu('xfer');
-		console.gotoxy(2,24);
-        console.putmsg(bracket('@LN@') + color.t_user + '@LIB@' + bracket('@DN@') + color.t_menu + '@DIRL@\1n');
-        console.crlf();
-        console.putmsg(color.t_user + user.alias + color.t_sym + '@' + color.t_menu + 'File Menu' + color.t_sym + ':\1n');
+		mystPrompt('Files');
         
         var key = console.getkey(K_NOECHO).toUpperCase();
         bbs.log_key(key);
@@ -948,7 +959,7 @@ function xferMenu() {
                 // SLASH AND COLON MENUS
             case '/': // FOR /F /N /R /J
                 console.putmsg('/');
-                slashMenu(console.getkeys('?DXOFNR').toUpperCase());
+                slashMenu(console.getkeys('?DXOFNR',1));
                 break;
             case 'D':
                 console.print(color.t_txt + "\r\nDownload File(s)\r\n");
@@ -989,6 +1000,9 @@ function slashMenu(option) {
         console.clear();
         mystMenu('obsc');
         break;
+    case '1':
+		bbs.exec('*d1liner');
+        break;
 	case 'A':
 		avatar_chooser();
 		break;
@@ -1017,18 +1031,26 @@ function slashMenu(option) {
         bbs.scan_posts(msg_area.grp_list[bbs.curgrp].sub_list[bbs.cursub].code, 0);
         break;
     case 'J':
-        bbs.exec('?../xtrn/DDMsgReader/DDMsgReader.js -chooseAreaFirst');
+			//if (file_exists('../xtrn/DDMsgReader/DDMsgReader.js')) {
+                    bbs.exec('?../xtrn/DDMsgReader/DDMsgReader.js -chooseAreaFirst' + DDconfig);
+            //    } else {
+            //        bbs.read_mail(which=MAIL_SENT;
+            //    } 
         break;
     case 'X':
         user.settings ^= USER_EXPERT;
         break;
     case 'T':
         bbs.exec('?filearea-lb.js')
-    case '\r':
+    case 'Q':
+	//mystMenu("qwk");
+         bbs.qwk_sec();
+        break;
+	case '\r':
         return;
 	case 'S':
 		scoresMenu();
-		return;
+		break;
     default:
         alert('NOT VALID');
         console.pause();

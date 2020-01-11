@@ -104,9 +104,9 @@ function askLastCallers(int) {
     var num = int;
     console.crlf();
     if (num == 'undefined' || num == null) {
-        console.putmsg(color.t_sym + '[' + color.t_sym2 + '?' + color.t_sym + '] ' + color.t_ques + 'How many callers would you like to list? ' + color.t_txt2 + '10 Max.' + color.t_sym + ' [' + color.t_sym2 + conf.rumorsNum + color.t_sym + ']');
+        console.putmsg(color.t_sym + '[' + color.t_sym2 + '?' + color.t_sym + '] ' + color.t_ques + 'How many callers would you like to list? ' + color.t_txt2 + '9 Max.' + color.t_sym + ' [' + color.t_sym2 + conf.rumorsNum + color.t_sym + ']');
         console.putmsg(color.t_sym + ' : ');
-        num = console.getnum(10, conf.rumorsNum);
+        num = console.getnum(9, conf.rumorsNum);
     }
     lastCallers(num);
 }
