@@ -176,7 +176,11 @@ function msgMenu() {
             case 'G':
             case 'J':
                 mystMenu(conf.fontcode);
+<<<<<<< HEAD
                 bbs.exec('?../xtrn/DDMsgReader/DDMsgReader.js -chooseAreaFirst' + DDconfig);
+=======
+                bbs.exec('?DDMsgAreaChooser.js');
+>>>>>>> origin/master
                 break;
                 // READ NEW MESSAGES IN CURRENT GROUP
 			case 'I':
