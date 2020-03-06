@@ -1,9 +1,9 @@
 [0;40;37m
 
-[44;30m [1;37mSLASH COMMANDS                                       [0m
+[44;30m [1;37mSLASH COMMANDS                                [0;44;30m                                [0m
 [1m [0mSlash commands are menu specific and are alternative versions to their
  non-slash counterparts.  [1;32m* [0mMsg Menu[10C[1;34m* [0mAlmost Everywhere
 
  [1m/F.[31mind Text [32m* [30m(Alt Style)  [37m /D.[31mefaults[0m [1;34m* [30m(Alt Style)  [37m /X[36m.[31mExpert Menus[30m [34m*
- [37m/N.[31mew Scan  [32m* [30m(Alt Style)[0m[29C[1m /O.[31mFast Log-Off[30m [34m*
+ [37m/N.[31mew Scan  [32m* [30m(Alt Style)[0m   [1m/Q.[31mWK Menu[0m[16C[1m /O.[31mFast Log-Off[30m [34m*
  [37m/R.[31mead Msg  [32m* [30m(Alt Style)

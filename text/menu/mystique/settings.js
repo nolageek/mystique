@@ -24,3 +24,5 @@
 //conf.amsgPrefi	= '@RIGHT:10@\1h\1b';
 //conf.fontcode 	= '437'; // 437, topaz, pot-noodle, microknight, mosoul
 //conf.useDefDoors	= 0
+
+//bbs.replace_text(563,color.t_sym + "@GOTOXY:1,25@[" + color.t_txt + "pause" + color.t_sym2 + "/" + color.t_txt2 + "press any key" + color.t_sym + "]");

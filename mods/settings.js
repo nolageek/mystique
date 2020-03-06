@@ -2,7 +2,7 @@ load("sbbsdefs.js"); // load helper functions
 var settingsFile = system.text_dir + 'menu\\' + user.command_shell + '\\settings.js';
 var langFile = system.text_dir + 'menu\\' + user.command_shell + '\\lang.js';
 var DDconfig = "";
-	if (file_exists('../xtrn/DDMsgReader/' + user.command_shell + '-DDMsgReader.cfg'))
+	if (file_exists('/sbbs/xtrn/DDMsgReader/' + user.command_shell + '-DDMsgReader.cfg'))
 	DDconfig = " -configFilename=" + user.command_shell + "-DDMsgReader.cfg";
 
 // SET DEFAULT VALUES
@@ -32,6 +32,7 @@ var conf = []
     conf.fontcode    = '437';
 	conf.rumorsNum	= 10;
     conf.useDefDoors = 1;
+	conf.DDReader = '../xtrn/DDMsgReader/DDMsgReader.js';
     conf.ircChannels = [{    
         channel:"#bbs",
         name:"#bbs",
@@ -54,20 +55,12 @@ var conf = []
 //  Default screenRows to console.screen_rows; overwrite if user has set this option in defaults.
 var screenRows = console.screen_rows;
     
-if (user.screen_rows) {
+if (user.screen_rows) 
     screenRows = user.screen_rows;
-    }
-
-
-
+    
 // Get options and colors from settings.js in theme directory. Overwrite defaults if found.
 
 bbs.revert_text();
-
-
-if (file_exists(settingsFile)) {
-    load(settingsFile);
-}
 
 var quesBox = color.t_sym + "[" + color.t_sym2 + "?" + color.t_sym + "]";
 var warnBox = color.t_sym + "[" + color.t_alert + "!" + color.t_sym + "]";
@@ -95,7 +88,6 @@ bbs.replace_text(369,""); //Does your terminal support IBM extended ASCII
 bbs.replace_text(371,color.t_txt + "Your password is" + color.t_info + "%s\r\n");
 bbs.replace_text(372,warnBox + color.t_txt2 + "Write down your password and keep it confidential.\r\n\r\n" + warnBox + color.t_ques + " Enter this password for verification" + color.t_sym2 + ": " + color.d_value);
 bbs.replace_text(764,"@EXEC:findansi newuser@"); // replace with ansi
-	
 bbs.replace_text(339,quesBox + color.t_txt + " Enter your full real name= \1w");
 bbs.replace_text(340,quesBox + color.t_txt + " Enter your group affiliation" + color.t_sym2 + ": " + color.d_value);
 bbs.replace_text(341,quesBox + color.t_txt + " Enter your handle or call-sign= \1w");
@@ -104,17 +96,17 @@ bbs.replace_text(343,quesBox + color.t_txt + " Enter your street address= \1w");
 bbs.replace_text(344,quesBox + color.t_txt + " Enter your voice phone number= \1w");
 bbs.replace_text(347,quesBox + color.t_txt + " Enter your zip (or postal) code= \1w");
 bbs.replace_text(362,color.t_txt + "Read your mail now");
+bbs.replace_text(383,"\1h\1w%3u" + color.t_txt2 + " \xb3 " + color.t_txt + "%-25.25s\1h      ");
+bbs.replace_text(381,"\1h\1wNum" + color.t_txt2 + " \xb3 " + color.t_txt + "Name                           ");
+bbs.replace_text(382,color.t_txt2 + "\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4\xc4      ");
+bbs.replace_text(384,"@GOTOXY:2,24@" + color.t_txt + "Which or " + color.t_txt2 + "~Q" + color.t_txt + "uit: \1h");
 bbs.replace_text(563,color.t_sym + "@GOTOXY:1,25@[" + color.t_txt + "pause" + color.t_sym2 + "/" + color.t_txt2 + "press any key" + color.t_sym + "]");
-
 bbs.replace_text(497,quesBox + color.t_txt + "How many rows on your monitor [\1wAuto Detect\1y]= ");
-//bbs.replace_text(563,color.t_sym + " [" + color.t_sym2 + "p" + color.t_txt2 + "ause" + color.t_sym + "/" + color.t_menu + "press any key" + color.t_sym + "]");
-
 bbs.replace_text(570,"\r\n " + color.t_user + user.alias + color.t_sym + '@' + color.t_menu + "QWK" + color.t_sym + ": \1n");
 bbs.replace_text(660,"@EXEC:DDFLIST@");
 bbs.replace_text(661,"@EXEC:DDFL_HDR@");
-bbs.replace_text(694," Node Status:\r\n --- ---------------------------------------------------\r\n\1n");
 bbs.replace_text(811,quesBox + color.t_txt + " HIT your " + color.t_sym2 + "BACKSPACE" + color.t_txt +" or " + color.t_sym2 + "DELETE-LEFT" +color.t_txt + " key: "); 
 bbs.replace_text(826,"\15\1n\1hLogging on to @BBS@ as @ALIAS@ @ELLIPSIS@\1n\r\n @RESETPAUSE@");
-if (file_exists(langFile)) {
-    load(langFile);
-}
+
+if (file_exists(settingsFile)) 
+    load(settingsFile);
