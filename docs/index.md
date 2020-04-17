@@ -1,13 +1,18 @@
-Menu Files
+# Installation
+
+# Menu Files
+Place menu files in a directory within sbbs\text\menu\ that correlates to the code used for the menu set in SCFG. If no file is used in user's current menu dir, one will be used from the sbbs\text\menu\mystique directory.
+
+All menus can have multiple files and one will be chosen at random. main.ans, main1.ans, main2.ans, main-a.ans, main-b.ans, main-skull, main-castle are all valid file names for the main menu.
 
 * Main: main.ans
-* Message: mesg.ans
+* Messages: mesg.ans
   * Email: mail.ans
 * Scores: scores.ans
 * System: system.ans
   * User Info: userinfo.ans
 * Chat: chat.ans
-  * IRC: chat-irc.ans
+  * IRC: irc.ans
 * Transfers: xfer.ans
 * Obscure: obsc.ans
 * Logoff: goodbye.ans
