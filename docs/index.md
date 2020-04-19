@@ -39,3 +39,26 @@ All menus can have multiple files and one will be chosen at random. main.ans, ma
 * W Who Is Online
 * X Xternal Programs (Doors)
 
+### Messages Menu
+* ? Display Menu 
+* ! Log Off (Fast)
+* / Slash Commands (Global)
+* } or UP ARROW Next Message Group
+* { or DOWN ARROW Previous Message Group
+* ] or RIGHT ARROW Next Message Area
+* [ or LEFT ARROW Previous Message Area
+* C Configure Message Scan
+* D Defaults
+* E Email Menu
+* F or G Find text in Messages
+* J Jump to Message Group
+* I Information on Current Message Area
+* L List Messages in Current Message Area
+* N New Message Scan
+* O Log Off
+* P Post New Message
+* Q Quit to Main Menu
+* R or ENTER Read Messages in Current Message Area
+* S Scan for Messages to You
+
+
