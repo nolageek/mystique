@@ -23,15 +23,15 @@ All menus can have multiple files and one will be chosen at random. main.ans, ma
 ### Main Menu
 * ? Display Menu 
 * ! Log Off (Fast)
-* ;, :, . SysOp Commands
+* ; or : or . SysOp Commands
 * / Slash Commands (Global)
 * 1 One Liners
 * A Automessage
 * C Chat Menu
 * D Defaults
 * F File Menu
-* G, T Text Files
-* I, S System Information
+* G or T Text Files
+* I or S System Information
 * L Last x Callers
 * M Messages Menu
 * O Log Off
