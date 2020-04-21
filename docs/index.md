@@ -61,4 +61,50 @@ All menus can have multiple files and one will be chosen at random. main.ans, ma
 * R or ENTER Read Messages in Current Message Area
 * S Scan for Messages to You
 
+### Email Menu
+* F Feedback to SysOp
+* O Outbox
+* Q Quit to Main Menu
+* R Read Mail
+* S Send Mail
+
+### System Menu
+* L Last Callers
+* Q Quit to Main Menu
+* S System Information
+* U Userlist
+* V BBS Version Information
+* W Who is Online
+* Y Your User Information
+
+### System Information Menu
+
+### Chat Menu Menu
+* A Center of Awareness Chat
+* I Synchronet InterBBS Messaging
+* J Multinode Chat
+* M MRC Chat
+* N Page Sysop
+* P Private Chat
+* Q Quit to Message Menu
+* R IRC Chat
+
+### Transfer Menu
+* ? Display Menu 
+* ! Log Off (Fast)
+* / Slash Commands (Global)
+* } or UP ARROW Next File Group
+* { or DOWN ARROW Previous File Group
+* ] or RIGHT ARROW Next File Area
+* [ or LEFT ARROW Previous File Area
+* B Batch Menu
+* D Download File(s)
+* F Find text in File Descriptions
+* G or J Jump to File Group
+* L or ENTER List Files in Current Area
+* N New File Scan
+* O Log Off
+* Q Quit to Main Menu
+* S Scan for Test in File Names
+* U Upload New File
 
