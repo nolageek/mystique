@@ -77,8 +77,6 @@ All menus can have multiple files and one will be chosen at random. main.ans, ma
 * W Who is Online
 * Y Your User Information
 
-### System Information Menu
-
 ### Chat Menu Menu
 * A Center of Awareness Chat
 * I Synchronet InterBBS Messaging
@@ -89,6 +87,12 @@ All menus can have multiple files and one will be chosen at random. main.ans, ma
 * Q Quit to Message Menu
 * R IRC Chat
 
+### IRC Menu
+* 1
+* 2
+* 3
+* 4
+* Q
 ### Transfer Menu
 * ? Display Menu 
 * ! Log Off (Fast)
@@ -108,3 +112,14 @@ All menus can have multiple files and one will be chosen at random. main.ans, ma
 * S Scan for Test in File Names
 * U Upload New File
 
+### Slash Menu
+* /? Display Menu
+* /A Avatar Chooser
+* /C MRC Chat
+* /D ?xtrn_sec
+* /G xferMenu()
+* /N New Scan All
+* /O Logoff Fast
+* /S Scores Menu
+* /W bbs.xtrn_sec()
+* /X Toggle Xpert Mode ***
