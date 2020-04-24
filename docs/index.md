@@ -7,17 +7,24 @@ All menus can have multiple files and one will be chosen at random. main.ans, ma
 
 ## File Names
 
-* Main: main.ans
-* Messages: mesg.ans
-  * Email: mail.ans
-* Scores: scores.ans
-* System: system.ans
-  * User Info: userinfo.ans
-* Chat: chat.ans
-  * IRC: irc.ans
-* Transfers: xfer.ans
-* Obscure: obsc.ans
-* Logoff: goodbye.ans
+* **main.ans**: Main Menu
+* **mesg.ans**: Message Menu
+  * **mail.ans**: Mail Menu 
+* **scores.ans**: Scores Menu
+* **system.ans**: System Menu
+  * **userinfo.ans**: User Info
+* **chat.ans**: Chat Menu
+  * ***irc.ans**: IRC Menu
+* **xfer.ans**: Transfers Menu
+* **obsc.ans**: Obscure Commands
+* **goodbye.ans**: Logoff
+
+## Headers
+* header.ans: Default header, used if the following menu specific header files are not found.
+* hdr-online.ans: Displayed above node list.
+* hdr-userlist.ans: Displayed above User List
+* hdr-userinfo.ans: Displayed above Current User Info
+
 
 ## Commands
 ### Main Menu
