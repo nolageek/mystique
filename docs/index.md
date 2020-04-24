@@ -14,16 +14,16 @@ All menus can have multiple files and one will be chosen at random. main.ans, ma
 * **system.ans**: System Menu
   * **userinfo.ans**: User Info
 * **chat.ans**: Chat Menu
-  * ***irc.ans**: IRC Menu
+  * **irc.ans**: IRC Menu
 * **xfer.ans**: Transfers Menu
 * **obsc.ans**: Obscure Commands
 * **goodbye.ans**: Logoff
 
 ## Headers
-* header.ans: Default header, used if the following menu specific header files are not found.
-* hdr-online.ans: Displayed above node list.
-* hdr-userlist.ans: Displayed above User List
-* hdr-userinfo.ans: Displayed above Current User Info
+* **header.ans**: Default header, used if the following menu specific header files are not found.
+* **hdr-online.ans**: Displayed above node list.
+* **hdr-userlist.ans**: Displayed above User List
+* **hdr-userinfo.ans**: Displayed above Current User Info
 
 
 ## Commands
