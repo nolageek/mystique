@@ -16,7 +16,8 @@ All menus can have multiple files and one will be chosen at random. main.ans, ma
 * **chat.ans**: Chat Menu
   * **irc.ans**: IRC Menu
 * **xfer.ans**: Transfers Menu
-* **obsc.ans**: Obscure Commands
+* **slash.ans**: Slash Commands
+* **2slash.ans**: Two-Slash Commands
 * **goodbye.ans**: Logoff
 
 ## Headers
@@ -122,11 +123,10 @@ All menus can have multiple files and one will be chosen at random. main.ans, ma
 ### Slash Menu
 * /? Display Menu
 * /A Avatar Chooser
-* /C MRC Chat
+* /C or /M MRC Chat
 * /D ?xtrn_sec
 * /G xferMenu()
 * /N New Scan All
 * /O Logoff Fast
 * /S Scores Menu
-* /W bbs.xtrn_sec()
 * /X Toggle Xpert Mode ***
