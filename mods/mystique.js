@@ -2,29 +2,31 @@
                        Mystique Synchronet 3 Command Shell
                        requires DDMsgReader, DDAreaLister
                        
-					   FLAGS1: PFREDT: Posted, Read, Feedback, email, doors, text files
-										Flags1 get wiped each new call.
-					   FLAGS2: F: Fast login
+					   FLAGS1: PFREDTK: Posted, Read, Feedback, email, doors, text files, FMK
+									   Flags1 get wiped each new call.
+					   FLAGS2: F: Fast login, (L: LeetCase, C:LeetColor) - No menu yet.
 ----------------------------------------------------------------------------*/
 load("sbbsdefs.js"); // load helper functions
-load("functions.js");
-load("settings.js");
+load("myst_functions.js");
+load("myst_settings.js");
+load("myst_colors.js");
 load("dd_lightbar_menu.js");
 
 //load('fonts.js', "437");
 
 // Load (fontcode).ans from selected menu set directory, reset the font to 437 or amiga.
-mystMenu(conf.fontcode); // reset font type
+bbs.menu(conf.fontcode); // reset font type
 
 // Get current shell code, to check later in case of settings change.
 var thisShell = user.command_shell;
 
-js.on_exit('lastCaller()'); // generate last caller entry if disconnected
+js.on_exit('setActivityFlags()'); // set activity flags if disconnected
 
 // activity will be posted to last caller list by default
 var activity = [];
+activity.hungup = "H";
 
-console.putmsg(color.t_info + 'Loading ' + system.name + ' Command Shell..' + color.t_yes + thisShell.toUpperCase() + ' Loaded!');
+console.putmsg(mystText(color.normal + 'Loading ' + system.name + ' Command Shell.. ' + color.t_yes + thisShell.toUpperCase() + ' Loaded!\1n\1c'));
 console.crlf(2);
 sleep(500);
 
@@ -40,7 +42,7 @@ bbs.timeout_hangup = 300; //300 second default timeout hangup
 function filemenu() {
     console.crlf();
 	console.gotoxy(2,24);
-    console.putmsg(color.t_alert + "Womp womp. Transfer section is not available. \1c\1hTry \1b\1hG\1r\1ho\1y\1ho\1b\1hg\1g\1hl\1r\1he\1c?\1n");
+    console.putmsg(" Womp womp. Transfer section is not available. \1n\1c\1hTry \1b\1hG\1r\1ho\1y\1ho\1b\1hg\1g\1hl\1r\1he\1c?\1n".toMystText());
     console.pause();
     return;
 }
@@ -52,12 +54,8 @@ function mainMenu() {
             return;
         bbs.node_action = NODE_MAIN;
         bbs.nodesync();
-        mystMenu(conf.fontcode); // reset font type
-        
-		if(!(user.settings & USER_EXPERT)) 
-        mystMenu('main');
-		else 
-		console.clear();
+        bbs.menu(conf.fontcode); // reset font type
+
 		mystPrompt('Main');
 
         //options and commands to perform
@@ -66,80 +64,77 @@ function mainMenu() {
 
         switch (key) {
             // MAIN OPTIONS
-			
-            case 'C':
-				chatMenu();
-                 break;
-            case 'G':
-            case 'T':
-				activity.gfiles = 'T';
-                //bbs.exec_xtrn('TEXTFILE');
-					bbs.text_sec();
-                break;
-			case 'M':
-                msgMenu();
-                break;
-            case 'I':
-				systemMenu();
-				break;
-			case 'S':
-				scoresMenu();
-				break;
-            case 'X':
-				if (file_exists('/sbbs/mods/xtrn_sec_vanguard.js')) 
-					bbs.exec('?xtrn_sec_vanguard.js');
-				else 
-					bbs.xtrn_sec();
-                break;
-                // OTHER OPTIONS
-            case '1':
-                bbs.exec('*oneliners');
-                break;
-            case 'A':
-                bbs.exec("*automsg")
-                break;
-            case 'D':
-                defaults();
-                break;
-			case 'R':
-                bbs.exec('*rumors addrumor');
-                break;
-                // SOME POPULAR 'HIDDEN' ITEMS (NOT ON MENU)    
-            case 'F':
-                filemenu();
-                break;
-            case 'W':
-                mystHeader('online');
-                bbs.list_nodes();
-                break;
-            case 'L':
-                bbs.exec('*lastcallers.js');
-                break;
-            case '/': // SLASH MENU
-                console.putmsg('/');
-                slashMenu(console.getkeys('?ACDTSGQXO',1));
-                break;
-            case ';': // SYSOP MENU
-            case '.':
-                console.crlf();
-                if (user.compare_ars('SYSOP')) {
-                    console.print(color.t_alert + 'Sysop Command: \1n\1w');
-                    bbs.exec('*str_cmds ' + console.getstr(40));
-                    break;
-                }
-                break;
 			case '?':
 				if(user.settings & USER_EXPERT) {
 				console.clear();
 				mystMenu('main');
 				}
 				break;
-            case 'O': // LOGOFF
-                logOff();
-                break;
 			case '!':
 				logOffFast();
 				break;
+            case '.':
+                console.crlf();
+                if (user.compare_ars('SYSOP')) {
+                    console.print(" " + color.t_alert + 'Sysop Command:'+ RESETCOLOR + " ");
+                    bbs.exec('*str_cmds ' + console.getstr(40));
+                    break;
+                }
+                break;
+            case '/': // SLASH MENU
+                console.putmsg('/');
+                slashMenu(console.getkeys('?/1!AMCODFNXSTQ',1));
+                break;
+            case '1':
+                bbs.exec('*oneliners');
+                break;
+			case 'A':
+                bbs.exec("*automsg")
+                break;
+            case 'C':
+				chatMenu();
+                 break;
+			case 'D':
+                defaults();
+                break;
+            case 'F':
+                filemenu();
+                break;
+			case 'G':
+			case 'T':
+				activity.gfiles = 'T';
+				bbs.exec('?text_sec.js');
+                break;
+            case 'I':
+			case 'S':
+				systemMenu();
+				break;
+            case 'L':
+                bbs.exec('*myst_lastcallers.js');
+				console.pause();
+                break;
+			case 'M':
+				//console.print(color.t_alert + ">> Message Menu\1n")
+                msgMenu();
+                break;
+            case 'O': // LOGOFF
+                logOff();
+                break;
+			case 'R':
+                bbs.exec('*rumors addrumor');
+                break;
+            case 'W':
+                mystHeader('hdr-online');
+                bbs.list_nodes();
+				console.pause();
+                break;
+            case 'X':
+				activity.doors = 'D';
+				if (file_exists('/sbbs/mods/xtrn_sec_vanguard.js')) 
+					bbs.exec('?xtrn_sec_vanguard.js');
+				else 
+					bbs.xtrn_sec();
+                break;
             default: // FALL BACK
                 break;
         } // end switch
@@ -152,15 +147,29 @@ function msgMenu() {
             return;
         bbs.node_action = NODE_RMSG;
         bbs.nodesync();
-        console.clear();
-        mystMenu(conf.fontcode);
-        mystMenu('mesg');
-		mystPrompt('Messages');
+        bbs.menu(conf.fontcode);
+
+		mystPrompt('Mesg');
+		
         var key = console.getkey(K_NOECHO).toUpperCase();
         bbs.log_key(key);
         switch (key) {
-            // NAVIGATE GROUPS/SUBS
-            case '}':
+			case '?':
+				if(user.settings & USER_EXPERT) {
+				console.clear();
+				mystMenu('mesg');
+				}
+				break;
+			case '!':
+				logOffFast();
+				break;
+                // SLASH AND COLON MENUS
+			case '/': // FOR /F /N /R /J
+                console.putmsg('/');
+                slashMenu(console.getkeys('?/1!AMCODFNXRSTQ',1));
+                break;
+				// NAVIGATE GROUPS/SUBS
+			case '}':
             case KEY_UP:
                 bbs.lastgrp = bbs.curgrp;
                 bbs.curgrp++;
@@ -185,17 +194,28 @@ function msgMenu() {
                 if (bbs.lastsub == bbs.cursub) bbs.cursub = msg_area.grp_list[bbs.curgrp].sub_list.length - 1;
                 break;
                 // SELECT GROUPS/SUBS
-            case 'D':
+            case 'C':
+            if (file_exists('/sbbs/mods/DM_NewScanConfig.js')) 
+                    bbs.exec('?DM_NewScanConfig.js');
+                else 
+                    bbs.cfg_msg_scan();
+                break;
+			case 'D':
                 defaults();
                 break;
             case 'E':
                 emailMenu();
                 break;
-            case 'G':
+                // FIND TEXT IN POSTS
+            case 'F':
+                bbs.scan_subs(SCAN_FIND);
+                break;
+			case 'G':
             case 'J':
-                mystMenu(conf.fontcode);
+                bbs.menu("437");
 				if (file_exists(conf.DDReader)) 
 					bbs.exec('?' + conf.DDReader + ' -chooseAreaFirst' + DDconfig);
+				bbs.menu(conf.fontcode);
                 break;
                 // READ NEW MESSAGES IN CURRENT GROUP
 			case 'I':
@@ -203,67 +223,51 @@ function msgMenu() {
                 bbs.sub_info();
                 break;
             case 'L':
-				mystMenu(conf.fontcode);
+				bbs.menu("437");
                 if (file_exists(conf.DDReader)) 
 					bbs.exec('?' + conf.DDReader + ' -startMode=list' + DDconfig);
-				else if (file_exists(system.mods_dir + 'msglist.js')) 
-					bbs.exec('?' + system.mods_dir + 'msglist.js');
+				else if (file_exists('/sbbs/mods/msglist.js')) 
+					bbs.exec('?msglist.js');
 				else
                     bbs.list_msgs();
                 break;
-            case 'R':
+				bbs.menu(conf.fontcode);
+                // POST NEW MESSAGE IN CURRENT GROUP
+                // SCAN FOR NEW MESSAGES
+            case 'N':
+                // will use DDMesgReader if installed as Loadable module
+                console.print(color.t_alert + " New Message Scan \1n\r\n");
+				bbs.menu("437");
+                bbs.scan_subs(SCAN_NEW);
+				bbs.menu(conf.fontcode);
+                break;
+                // SCAN FOR UNREAD MESSAGE TO USER
+            case 'O':
+                logOff();
+                break;
+            case 'P':
+                bbs.menu("437");
+                bbs.post_msg(msg_area.grp_list[bbs.curgrp].sub_list[bbs.cursub].code);
+				bbs.menu(conf.fontcode);
+                break;
+            case 'Q':
+                mainMenu();
+                return;
+			case 'R':
             case '\r':
-				mystMenu(conf.fontcode);
+				bbs.menu("437");
                 if (file_exists(conf.DDReader)) 
 					bbs.exec('?' + conf.DDReader + DDconfig);
 				else
                     bbs.list_msgs();
+				bbs.menu(conf.fontcode);
                 break;
-                // POST NEW MESSAGE IN CURRENT GROUP
-            case 'P':
-                mystMenu(conf.fontcode);
-                bbs.post_msg(msg_area.grp_list[bbs.curgrp].sub_list[bbs.cursub].code);
-                break;
-                // SCAN FOR NEW MESSAGES
-            case 'N':
+			case 'S':
                 // will use DDMesgReader if installed as Loadable module
-                mystMenu(conf.fontcode);
-                console.print("\r\n" + color.t_ques + "New Message Scan\r\n");
-                bbs.scan_subs(SCAN_NEW);
-                break;
-                // SCAN FOR UNREAD MESSAGE TO USER
-            case 'S':
-                // will use DDMesgReader if installed as Loadable module
-                mystMenu(conf.fontcode);
-                console.print("\r\n" + color.t_ques + "Scan for Messages Posted to You\r\n");
+                bbs.menu("437");
+                console.print("\r\n " + color.t_alert + "Scan for Messages Posted to You\r\n");
                 bbs.scan_subs(SCAN_TOYOU);
-                break;
-                // CONF NEW MSG SCAN
-            case 'C':
-            if (file_exists(system.mods_dir + '/DM_NewScanConfig.js')) 
-                    bbs.exec('?DM_NewScanConfig.js');
-                else 
-                    bbs.cfg_msg_scan();
-                break;
-                // FIND TEXT IN POSTS
-            case 'F':
-                bbs.scan_subs(SCAN_FIND);
-                break;
-                // SLASH AND COLON MENUS
-            case '/': // FOR /F /N /R /J
-                console.putmsg('/');
-                slashMenu(console.getkeys('?DXOFNWQR',1));
-                break;
-                // QUIT
-            case 'Q':
-                mainMenu();
-                return;
-                // LOG OUT
-			case '!':
-				logOffFast();
-				break;
-            case 'O':
-                logOff();
+				bbs.menu(conf.fontcode);
                 break;
                 // FALL THROUGH
             default:
@@ -278,36 +282,42 @@ function scoresMenu() {
 		if (thisShell.toUpperCase() != user.command_shell.toUpperCase()) 
             return;
         bbs.nodesync();
-        console.clear();
-        mystMenu(conf.fontcode);
-        mystMenu('scores');
+        bbs.menu(conf.fontcode);
+
 		mystPrompt('Scores');
+		
         var key = console.getkey(K_NOECHO).toUpperCase();
         bbs.log_key(key);
         switch (key) {
+			case '?':
+				if(user.settings & USER_EXPERT) {
+				console.clear();
+				mystMenu('scores');
+				}
+				break;
             // NAVIGATE GROUPS/SUBS
-            case 'L':
-			bbs.exec("?/sbbs/xtrn/bullshit/bullshit.js local")
-			break;
             case 'B':
-			bbs.exec("?/sbbs/xtrn/bullshit/bullshit.js bbslink")
-			break;
+				bbs.exec("?/sbbs/xtrn/bullshit/bullshit.js bbslink")
+				break;
             case 'C':
-			bbs.exec("?/sbbs/xtrn/bullshit/bullshit.js coa")
-			break;
+				bbs.exec("?/sbbs/xtrn/bullshit/bullshit.js coa")
+				break;
             case 'D':
-			bbs.exec("?/sbbs/xtrn/bullshit/bullshit.js party")
-			break;
+				bbs.exec("?/sbbs/xtrn/bullshit/bullshit.js party")
+				break;
+			case 'L':
+				bbs.exec("?/sbbs/xtrn/bullshit/bullshit.js local")
+				break;
             case 'N':
-			bbs.exec("?/sbbs/xtrn/bullshit/bullshit.js bulletins")
-			break;
+				bbs.exec("?/sbbs/xtrn/bullshit/bullshit.js bulletins")
+				break;
             case 'S':
-			bbs.exec("?/sbbs/xtrn/bullshit/bullshit.js news")
-			break;
-			case 'T':
-			bbs.exec("?/sbbs/xtrn/bullshit/bullshit.js business qrd")
-			break;			
-			case 'Q':
+				bbs.exec("?/sbbs/xtrn/bullshit/bullshit.js news")
+				break;
+            case 'R':
+				bbs.exec("?/sbbs/xtrn/bullshit/bullshit.js rss")
+				break;
+				case 'Q':
                 mainMenu();
                 return;
                 // LOG OUT
@@ -324,48 +334,51 @@ function systemMenu() {
             return;
         bbs.node_action = NODE_DFLT;
         bbs.nodesync();
-        console.clear();
-        mystMenu(conf.fontcode);
-        mystMenu('system');
+        bbs.menu(conf.fontcode);
+
 		mystPrompt('System');
-		//console.gotoxy(2,24);
-        //console.putmsg(color.t_user + user.alias + color.t_sym + '@' + color.t_menu + 'System Menu' + color.t_sym + ': \1n');
 
         var key = console.getkey(K_NOECHO).toUpperCase();
         bbs.log_key(key);
         switch (key) {
+			case '?':
+				if(user.settings & USER_EXPERT) {
+				console.clear();
+				mystMenu('system');
+				}
+				break;
             //options and commands to perform
-            case 'S':
+            case 'L':
+                bbs.exec('*myst_lastcallers.js');
+				console.pause();
+                break;
+            case 'Q':
+                return;
+			case 'S':
                 console.clear();
                 bbs.sys_info();
                 break;
             case 'U':
-                mystHeader('userlist');
+                mystHeader('hdr-userlist');
                 bbs.list_users();
                 console.line_counter = 1;
                 break;
-            case 'W':
-                mystHeader('online');
-				bbs.list_nodes();
-                break;
-            case 'L':
-                bbs.exec('*lastcallers.js');
-                break;
-            case 'Y':
-                //console.clear();
-				mystHeader('userinfo');
-                mystMenu('userinfo');
-				bbs.user_info();
-				break;
             case 'V':
                 console.clear();
                 bbs.ver();
                 break;
-            case 'Q':
-                mainMenu();
-                return;
-            default:
+			case 'W':
+                mystHeader('hdr-online');
+				bbs.list_nodes();
+				console.pause();
                 break;
+            case 'Y':
+				mystHeader('hdr-userinfo');
+                //mystMenu('userinfo');
+				bbs.user_info();
+				break;
+			default:
+				break;
         } // end switch
     } // while online
     return; // RETURN TO MAIN (to have last caller processed if user hangs up)
@@ -377,44 +390,50 @@ function chatMenu() {
             return;
         bbs.node_action = NODE_CHAT;
         bbs.nodesync()
-        console.clear();
-        mystMenu('chat');
+        bbs.menu(conf.fontcode);
+		
 		mystPrompt('Chat');
-		//console.gotoxy(2,24);
-        //console.putmsg(color.t_user + user.alias + color.t_sym + '@' + color.t_menu + 'Chat Menu' + color.t_sym + ': \1n');
+		
         var key = console.getkey(K_NOECHO).toUpperCase();
         bbs.log_key(key);
         switch (key) {
-          case 'M':
-              bbs.exec_xtrn('MRCCHAT');
-              break;
-            case 'I':
+			case '?':
+				if(user.settings & USER_EXPERT) {
+				console.clear();
+				mystMenu('chat');
+				}
+				break;
+			case 'A':
+                bbs.exec_xtrn('C0ACHAT');
+                break;
+			case 'I':
                 console.crlf();
                 bbs.exec('?sbbsimsg.js');
                 break;
             case 'J':
                 bbs.multinode_chat();
                 break;
+            case 'M':
+              bbs.exec_xtrn('MRCCHAT');
+              break;
+    		case 'N':
+                bbs.page_sysop();
+				bbs.exec("?pushover page");
+                sleep(500);
+                console.putmsg('...\1n');
+                sleep(500);
+                console.putmsg(' ...\1n');
+                sleep(500);
+                console.putmsg(' ... \1n\r\n\r\n');
+                sleep(500);
+				console.putmsg(" " + color.t_alert + "they have been paged\1n\r\n")
+                break;
             case 'P':
                 bbs.private_chat();
                 break;
-            case 'N':
-                bbs.page_sysop();
-                sleep(500);
-                console.putmsg(color.t_alert + '...');
-                sleep(500);
-                console.putmsg(color.t_alert + ' ...');
-                sleep(500);
-                console.putmsg(color.t_alert + ' ...');
-                sleep(500);
-                console.putmsg(color.t_alert + ' ...');
-                sleep(500);
-                console.putmsg(color.t_alert + ' ...');
-                break;
-            case 'A':
-                bbs.exec_xtrn('C0ACHAT');
-                break;
-            case 'R':
+            case 'Q':
+                return;
+			case 'R':
                 if (user.compare_ars("GUEST")) {
                     console.clear();
                     alert("Can't access as guest.");
@@ -423,7 +442,7 @@ function chatMenu() {
                 }
                 console.clear();
                 console.crlf(2);
-				mystMenu("chat-irc");
+				mystMenu("irc");
            
             var ircMenu = new DDLightbarMenu(46, 14, 32, conf.ircChannels.length+1);
                 ircMenu.numberedMode = true;
@@ -445,11 +464,8 @@ function chatMenu() {
                 console.line_counter = 0;
                 console.clear();
                 break;
-
-            case 'Q':
-            case '\r':
-                return;
-
+			default:
+				break;
         } // end switch
     } // while online
     return; // RETURN TO MAIN (to have last caller processed if user hangs up)
@@ -461,23 +477,41 @@ function emailMenu() {
 		  if (thisShell.toUpperCase() != user.command_shell.toUpperCase()) 
             return;
         bbs.node_action = NODE_RMAL;
-        bbs.nodesync();
-        console.clear();
-        mystMenu('mail');
-		mystPrompt('Email')
+        bbs.menu(conf.fontcode);
+		
+		mystPrompt('mail')
+		
         var key = console.getkey(K_NOECHO).toUpperCase();
         bbs.log_key(key);
         switch (key) {
-            case 'R':
-				if (file_exists(conf.DDReader)) 
-                    bbs.exec('?' + conf.DDReader + ' -personalEmail -startMode=list' + DDconfig);
-                else 
-                    bbs.read_mail();
+			case '?':
+				if(user.settings & USER_EXPERT) {
+				console.clear();
+				mystMenu('mail');
+				}
+				break;
+            case 'F':
+                console.clear();
+                bbs.email(1,subject='Feedback');
+                break;
+			case 'O':
+                bbs.node_action = NODE_RSML;
+                bbs.nodesync();
+				bbs.menu("437");
+				bbs.read_mail(MAIL_SENT, user.number, LM_REVERSE);
+				bbs.menu(conf.fontcode);
+                break;
+            case 'Q':
+                return;
+			case 'R':
+				bbs.menu("437");
+				bbs.read_mail(MAIL_YOUR, user.number);
+				bbs.menu(conf.fontcode);
                 break;
             case 'S':
                 bbs.node_action = NODE_SMAL;
                 bbs.nodesync();
-                console.print("\r\n" + color.t_ques + "E-mail (User name or number): \1n");
+                console.print("\r\n " + color.t_alert + "E-mail (User name or number):\1n ");
                 str = console.getstr("", 40, K_UPRLWR, false);
                 if (str == null || str == "")
                     break;
@@ -490,25 +524,6 @@ function emailMenu() {
                     if (i > 0)
                         bbs.email(i, WM_EMAIL);
                 }
-                break;
-            case 'O':
-                bbs.node_action = NODE_RSML;
-                bbs.nodesync();
-				if (file_exists(conf.DDReader)) 
-                    bbs.exec('?' + conf.DDReader + ' -personalEmailSent -startMode=list' + DDconfig);
-                else 
-                    bbs.read_mail(which=MAIL_SENT);
-                break;
-            case 'F':
-                console.clear();
-//                console.ungetstr('Feedback');
-                bbs.email(1,subject='Feedback');
-                break;
-            case 'Q':
-                msgMenu();
-                break;
-            case 'O':
-                logoffMenu();
                 break;
             default:
                 break;
@@ -527,15 +542,25 @@ function xferMenu() {
             return;
         bbs.node_action = NODE_XFER;
         bbs.nodesync();
-        console.clear();
-        mystMenu(conf.fontcode);
-        mystMenu('xfer');
-		mystPrompt('Files');
+        bbs.menu(conf.fontcode);
+
+		mystPrompt('Xfer');
         
         var key = console.getkey(K_NOECHO).toUpperCase();
         bbs.log_key(key);
         switch (key) {
-            // NAVIGATE GROUPS/SUBS
+			case '/': // FOR /F /N /R /J
+                console.putmsg('/');
+				slashMenu(console.getkeys('?/1!AMCODFNXSTQ',1));
+                break;
+			case '?':
+				if(user.settings & USER_EXPERT) {
+				console.clear();
+				mystMenu('xfer');
+				}
+				break;           
+                // LOG OUT
+		// NAVIGATE GROUPS/SUBS
             case '}':
             case KEY_UP:
                 if(bbs.curlib == file_area.lib_list.length-1)
@@ -568,6 +593,20 @@ function xferMenu() {
 				bbs.batch_menu();
 				break;
                 // SELECT GROUPS/SUBS
+                // FIND TEXT IN POSTS
+            case 'D':
+                console.print("\r\n " + color.t_alert + "Download File(s)\1n\r\n");
+                if(bbs.batch_dnload_total>0) {
+                    if(console.yesno(bbs.text(DownloadBatchQ))) {
+                        bbs.batch_download();
+                        break;
+                    }
+                }
+                break;
+			case 'F':
+                console.print(color.t_alert + "Find Text in File Descriptions (no wildcards)\r\n");             
+                bbs.scan_dirs(FL_FINDDESC);
+                break;
             case 'G':
             case 'J':
 				bbs.exec('?DDFileAreaChooser.js');
@@ -577,50 +616,28 @@ function xferMenu() {
                 // will use DDMesgReader if installed as Loadable module
                bbs.list_files();
                 break;
-                // POST NEW MESSAGE IN CURRENT GROUP
-            case 'U':
-                bbs.upload_file();
-                break;
                 // SCAN FOR NEW MESSAGES
             case 'N':
                 // will use DDMesgReader if installed as Loadable module
-                console.print("\r\n" + color.t_ques + "New File Scan\r\n");
+                console.print(color.t_alert + "New File Scan \1n\r\n");
                 bbs.scan_dirs(FL_ULTIME);
                 break;
-                // FIND TEXT IN POSTS
-            case 'F':
-                console.print("\r\n" + color.t_ques + "Find Text in File Descriptions (no wildcards)\r\n");             
-                bbs.scan_dirs(FL_FINDDESC);
-                break;
-            case 'S':
-                console.print("\r\n" + color.t_ques + "Search Text in File Names.\r\n");                
-                bbs.scan_dirs(FL_NO_HDR);
-                break;
-                // SLASH AND COLON MENUS
-            case '/': // FOR /F /N /R /J
-                console.putmsg('/');
-                slashMenu(console.getkeys('?DXOFNR',1));
-                break;
-            case 'D':
-                console.print(color.t_txt + "\r\nDownload File(s)\r\n");
-                if(bbs.batch_dnload_total>0) {
-                    if(console.yesno(bbs.text(DownloadBatchQ))) {
-                        bbs.batch_download();
-                        break;
-                    }
-                }
-                break;
-                // QUIT
-            case 'Q':
-                mainMenu();
-                return;
-            case '?':
-                mystMenu('xfer');
-                return;             
-                // LOG OUT
             case 'O':
                 logOff();
                 break;
+			case 'Q':
+                mainMenu();
+                return;
+			case 'S':
+                console.print(color.t_alert + "Search Text in File Names. \1n\r\n");
+                bbs.scan_dirs(FL_NO_HDR);
+                break;
+                // SLASH AND COLON MENUS
+                // UPLOAD FILE IN CURRENT GROUP
+            case 'U':
+                bbs.upload_file();
+                break;
+                // QUIT
                 // FALL THROUGH
             default:
                 break;
@@ -638,14 +655,23 @@ function slashMenu(option) {
     switch (option) {
     case '?':
         console.clear();
-        mystMenu('obsc');
+        mystMenu('slash');
+        console.pause();
+        break;
+	case '/': // FOR /F /N /R /J
+	    mystMenu('2slash');
+		console.putmsg(' ' + color.t_alert + 'Two-Slash Menu:\1n //');
+		//var keyword = console.getstr(maxlen=7).toUpperCase();
+		twoSlashMenu(console.getstr(maxlen=7,mode=K_NOCRLF).toUpperCase());
         break;
     case '1':
+    case '!':
 		bbs.exec('*d1liner');
         break;
 	case 'A':
-		avatar_chooser();
+		bbs.exec('?avatar_chooser');
 		break;
+	case 'M':
 	case 'C':
 		bbs.exec_xtrn('MRCCHAT');		
 		break;
@@ -653,55 +679,104 @@ function slashMenu(option) {
         logOffFast();
         break;
         // SYSTEM MENU
-    case 'W':
-        
-        bbs.xtrn_sec("LOCALGA")
+    case 'D':
+        bbs.xtrn_sec();
         break;
-        // MSG MENU
     case 'F':
-        bbs.scan_subs(SCAN_FIND, all = true);
-        break;
-    case 'X':
-        bbs.exec('?xtrn_sec LOCALGA');
-        break;
-    case 'G':
         xferMenu();
         break;
     case 'N':
+		bbs.menu("437");
+		console.print(format(" %sNew Message Scan \1n\r\n",color.t_alert));
         bbs.scan_subs(SCAN_NEW, all = true);
-        break;
-    case 'R':
-        bbs.scan_posts(msg_area.grp_list[bbs.curgrp].sub_list[bbs.cursub].code, 0);
-        break;
-    case 'J':
-				if (file_exists(conf.DDReader)) 
-					bbs.exec('?' + conf.DDReader + ' -chooseAreaFirst' + DDconfig);
+		console.print(format(" %sNew File Scan \1n\r\n",color.t_alert));
+		bbs.scan_dirs(FL_ULTIME);
+        bbs.menu(conf.fontcode);
         break;
     case 'X':
         user.settings ^= USER_EXPERT;
         break;
+    case 'R':
+		bbs.scan_msgs();
+        break;		
+	case 'S':
+		scoresMenu();
+		break;
     case 'T':
         bbs.exec('?filearea-lb.js')
+		break;
     case 'Q':
-	//mystMenu("qwk");
          bbs.qwk_sec();
         break;
 	case '\r':
         return;
+    default:
+        alert(' NOT VALID');
+        console.pause();
+        break;
+    }
+}
+
+function twoSlashMenu(option) {
+    switch (option) {
+    case '?':
+	case 'HELP':
+		mystMenu('2Slash');
+        console.pause();
+        return;
+    case 'COVID':
+		bbs.exec("?ctracker.js"); // covid tracker
+        break;
+    case 'WMATA':
+		bbs.exec_xtrn('WMATA'); // WMATA
+        break;
+    case 'BBSLINK':
+		activity.doors = 'D';
+		mystMenu('437');
+		bbs.exec_xtrn('BLMENU'); // BBS Link game server
+        break;
+    case 'DPARTY':
+		activity.doors = 'D';
+		bbs.exec_xtrn('DPDOORS');; // DP game server
+        break;
+    case 'BCR':
+		activity.doors = 'D';
+		bbs.exec_xtrn('BCRGAMES'); // BCR game server
+        break;
+    case 'EXODUS':
+		activity.doors = 'D';
+		bbs.exec_xtrn('EXODUSGA'); // Exodus game server
+        break;
+    case 'FMK':
+		//activity.fmk = 'K';
+		bbs.exec('?/sbbs/xtrn/fmk/fmk.js'); // Fuck Marry Kill
+        break;
+    case 'BBSLIST':
+		bbs.exec('?sbbslist'); // BBSLIST
+        break;
+	case 'CNN':
+		bbs.menu('/sbbs/text/bulletins/cnn'); // cnn News
+        break;
+	case 'RELOG':
+		bbs.exec('?logonevent'); // re-run logon event
+        break;
+	case 'NEWS':
+		bbs.exec('?rss2'); // rss news
+		//		bbs.exec('?/sbbs/xtrn/bullshitnew/bullshit.js /sbbs/xtrn/bullshitnew/news.ini rss-entertainment'); // rss news
+
+        break;
     default:
         alert('NOT VALID');
         console.pause();
         break;
     }
 }
-
-
 /*****************************************************************
                                           LAST 10 CALLER FUNCTIONS
 *****************************************************************/
 
 
-function lastCaller() {
+function setActivityFlags() {
 	
 	bbs.log_str('Removing user activity flags.');
 	user.security.flags1=0;
@@ -723,10 +798,17 @@ function lastCaller() {
 	if (activity.doors == 'D')
 		user.security.flags1|=UFLAG_D;
 	
+	if (activity.fmk == 'K')
+		user.security.flags1|=UFLAG_K;
+
+	if (activity.hungup == 'H')
+		user.security.flags1|=UFLAG_H;
+	
 	if (activity.gfiles == 'T')
 		user.security.flags1|=UFLAG_T;
 	
 	console.write("Setting up flags...\r\n");
+	bbs.exec('?/sbbs/xtrn/twitter/tweet.js ' + user.alias + ' has logged off the BBS. #bbslogoff');
 
 }
 
@@ -742,7 +824,7 @@ function logOff() {
     bbs.exec('*D1LINER');
     bbs.logoff(); // interactive logoff procedure
     if (!bbs.online) {
-		user.security.flags1^=UFLAG_H; 
+		activity.hungup = '-';
 		}
 }
 
@@ -750,7 +832,7 @@ function logOffFast() {
 	console.clear();
     bbs.logoff(false); // non-interactive logoff procedure
     if (!bbs.online) {
-		user.security.flags1^=UFLAG_H; 
+		activity.hungup = '-';
     }
 }
 
