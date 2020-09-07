@@ -1,17 +1,30 @@
 // Many thanks to tracker and ispyhumanfly for a lot of this code.
 load("sbbsdefs.js");
-load("settings.js");
-load("functions.js");
+
+var color = [];
+                            // MENU STRING COLORS
+    color.t_user  = '\1h\1c'; // username in menus 
+    color.t_sym   = '\1h\1k'; // symbols color @; [ ]; ( );etc..
+    color.t_sym2  = '\1h\1c'; // symbol highlght (numbers in [1]; menu options [A]; etc..)
+    color.t_txt   = '\1h\1b'; // color for most text
+    color.t_txt2  = '\1n\1c'; // aux color for text; bold words; values; etc...
+    color.t_info  = color.t_txt; // color for info text
+	color.t_ques  = '\1h\1r'; // color for question prompts
+var conf = [];
+	conf.LastCallersNum = 6;
+
+if (file_exists('/sbbs/mods/myst_settings.js'))
+	load("myst_settings.js");
+
+if (file_exists('/sbbs/mods/myst_functions.js'))
+	load("myst_functions.js");
 
 function lastCallers(num) {
 
-    if (!num) num = conf.rumorsNum;
+    if (!num) num = conf.LastCallersNum;
 
     //clear the counter...
     //console.line_counter = 0;
-
-    //console.clear();
-
     //now begin the last few callers module... 
     var show_count = num - 1; //number of logins to show...
     var u = new User(1); //user object...
@@ -46,7 +59,7 @@ function lastCallers(num) {
 
     var start = (laston_list.length > show_count) ? laston_list.length - 1 - show_count : 0;
     //console.ansi_gotoxy(3,8);
-    mystHeader('last10-h');
+    bbs.menu(user.command_shell + '/hdr-last10');
     //create a loop to display the last few callers...
     for (var i = start, j = 0; i < laston_list.length; i++, j++) {
         u.number = laston_list[i].number; //assign to user in list...
@@ -61,52 +74,54 @@ function lastCallers(num) {
         var lastdate = strftime("%m/%d/%y ", u.stats.laston_date);
         var firstdate = strftime("%m/%d/%y ", u.stats.firston_date);
 
-        var activit_posted = '-';
-        var activit_gfiles = '-';
-        var activit_feedback = '-';
-        var activit_readmg = '-';
-        var activit_hungup = '-';
-        var activit_doors = '-';
-        var activit_emails = '-';
-        var activit_isnew = '-';
+        var activit_posted 		= '-';
+        var activit_gfiles 		= '-';
+        var activit_feedback 	= '-';
+        var activit_readmg 		= '-';
+        var activit_hungup 		= '-';
+        var activit_doors 		= '-';
+        var activit_emails 		= '-';
+        var activit_isnew 		= '-';
+		var activit_fmk		 	= '-';
 
         if (lastdate == firstdate)
-            activit_isnew = "\1h\1g\1IN\1n\1w";
+            activit_isnew 		= "\1h\1g\1IN\1n\1w";
         if (u.security.flags1 & UFLAG_P)
-            activit_posted = 'P';
+            activit_posted 		= 'P';
         if (u.security.flags1 & UFLAG_T)
-            activit_gfiles = 'T';
+            activit_gfiles 		= 'T';
         if (u.security.flags1 & UFLAG_F)
-            activit_feedback = 'F';
+            activit_feedback 	= 'F';
         if (u.security.flags1 & UFLAG_R)
-            activit_readmg = 'R';
+            activit_readmg 		= 'R';
         if ((u.security.flags1 & UFLAG_H) && (u.alias != user.alias))
-            activit_hungup = 'H';
+            activit_hungup 		= 'H';
         if (u.security.flags1 & UFLAG_D)
-            activit_doors = 'D';
+            activit_doors 		= 'D';
         if (u.security.flags1 & UFLAG_E)
-            activit_emails = 'E';
-
+            activit_emails 		= 'E';
+        if (u.security.flags1 & UFLAG_K)
+            activit_fmk 		= 'K';
         var timelast = (u.stats.timeon_last_logon + "m");
         //how you want the information displayed via telnet...
 
-        var active = " " + color.t_txt2 + rpad(u.alias, 14) + color.t_txt + " " + rpad(u.location, 23) + color.t_user + " " + rpad(u.command_shell.toUpperCase(), 9) + "\1n\1c" + rpad(timeSince(u.stats.laston_date), 8) + color.t_info + rpad(u.stats.timeon_last_logon + "m", 5) + color.t_sym + "[" + color.t_sym2 + activit_isnew + color.t_sym2 + activit_posted + activit_readmg + activit_feedback + activit_gfiles + activit_doors + activit_emails + activit_hungup + color.t_sym + "] " + color.t_txt + rpad(totlogins, 5) + "\r\n";
+        var active = " " + color.t_txt2 + rpad(u.alias, 14) + color.t_txt + " " + rpad(u.location, 23) + color.t_user + " " + rpad(u.command_shell.toUpperCase(), 9) + "\1n\1c" + rpad(timeSince(u.stats.laston_date), 8) + color.t_txt + rpad(u.stats.timeon_last_logon + "m", 5) + color.t_sym + "[" + color.t_sym2 + activit_isnew + color.t_sym2 + activit_posted + activit_readmg + activit_feedback + activit_gfiles + activit_doors + activit_emails + activit_hungup + activit_fmk + color.t_sym + "] " + color.t_txt + rpad(totlogins, 5) + "\r\n";
 
 
         //now create the desired output...
         console.putmsg(active);
 
     }
-    mystMenu('last10-f');
-}
+    bbs.menu(user.command_shell + '/ftr-last10');
+	}
 
 function askLastCallers(int) {
     var num = int;
     console.crlf();
     if (num == 'undefined' || num == null) {
-        console.putmsg(color.t_sym + '[' + color.t_sym2 + '?' + color.t_sym + '] ' + color.t_ques + 'How many callers would you like to list? ' + color.t_txt2 + '9 Max.' + color.t_sym + ' [' + color.t_sym2 + conf.rumorsNum + color.t_sym + ']');
+        console.putmsg(bracket('?') + color.t_ques + 'How many callers would you like to list? ' + color.t_txt2 + '9 Max.' + bracket(conf.LastCallersNum));
         console.putmsg(color.t_sym + ' : ');
-        num = console.getnum(9, conf.rumorsNum);
+        num = console.getnum(9, conf.LastCallersNum);
     }
     lastCallers(num);
 }
@@ -143,6 +158,18 @@ function timeSince(ts) {
         return days + "d " + hou + "h";
     }
 
+}
+
+//pads right
+function rpad(str, length, padString) {
+    if (!padString)
+            var padString = ' ';
+    if (str.length > length)
+        str = str.substring(0, length);
+    while (str.length < length)
+        str = str + padString;
+        
+    return str;
 }
 
 if (!argv[0])
