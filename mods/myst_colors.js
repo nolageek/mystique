@@ -1,3 +1,5 @@
+load("sbbsdefs.js");
+
 var   BLACK			='\1n\1k';			/* dark colors (HIGH bit unset) */
 var   BLUE			='\1n\1c';
 var   GREEN			='\1n\1g';
@@ -26,10 +28,6 @@ var   BG_LIGHTGRAY	='\0017';
 
 var   RESETCOLOR	=BG_BLACK+LIGHTGRAY;
 
-// SET DEFAULT VALUES
-// set up default colors; in case no theme settings.js file is found.
-
-
 var colors = {
 	'fg' : WHITE,      // Non-highlighted item foreground
 	'bg' : BG_BLACK,   // Non-highlighted item background
@@ -41,3 +39,18 @@ var colors = {
 	'hbg' : BG_BLACK   // Header background
 };
 
+var color = [];
+	color.dark		= 	DARKGRAY;
+	color.normal	= 	LIGHTGRAY;
+	color.bright	=	WHITE;
+	color.reset		=	RESETCOLOR;
+	color.alert		=	BG_RED+WHITE;
+	color.yes		=	BG_GREEN+WHITE;
+	color.info		=	BG_LIGHTGRAY+color.bright;
+	color.select	=	BG_BLUE+color.bright;
+
+
+
+var mystColors 	= system.text_dir + 'menu/' + user.command_shell + '/myst_colors.js';
+if (file_exists(mystColors))
+	load(mystColors)

@@ -1,10 +1,12 @@
 //Fast login
 load("sbbsdefs.js"); // load helper functions
 load("ansislow.js");
+load("myst_colors.js")
 load("myst_functions.js");
-load("myst_settings.js");
+//load("myst_settings.js");
+//load("myst_colors.js");
 
-var color = "";
+//var color = "";
 //var conf = { fontcode : "437"
 //};
 

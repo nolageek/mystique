@@ -4,13 +4,14 @@
                        
 					   FLAGS1: PFREDTK: Posted, Read, Feedback, email, doors, text files, FMK
 									   Flags1 get wiped each new call.
-					   FLAGS2: F: Fast login, (L: LeetCase, C:LeetColor) - No menu yet.
+					   FLAGS2: F: Fast login, (L: LeetCase, C:LeetColor)
 ----------------------------------------------------------------------------*/
 load("sbbsdefs.js"); // load helper functions
 load("myst_functions.js");
 load("myst_settings.js");
 load("myst_colors.js");
 load("dd_lightbar_menu.js");
+load("myst_language.js");
 
 //load('fonts.js', "437");
 
@@ -19,6 +20,7 @@ bbs.menu(conf.fontcode); // reset font type
 
 // Get current shell code, to check later in case of settings change.
 var thisShell = user.command_shell;
+var thisFont = conf.fontcode;
 
 js.on_exit('setActivityFlags()'); // set activity flags if disconnected
 
@@ -26,7 +28,7 @@ js.on_exit('setActivityFlags()'); // set activity flags if disconnected
 var activity = [];
 activity.hungup = "H";
 
-console.putmsg(mystText(color.normal + 'Loading ' + system.name + ' Command Shell.. ' + color.t_yes + thisShell.toUpperCase() + ' Loaded!\1n\1c'));
+console.putmsg(mystText(color.normal + 'Loading ' + system.name + ' Command Shell.. ' + color.yes + thisShell.toUpperCase() + ' Loaded!\1n\1c'));
 console.crlf(2);
 sleep(500);
 
@@ -42,7 +44,7 @@ bbs.timeout_hangup = 300; //300 second default timeout hangup
 function filemenu() {
     console.crlf();
 	console.gotoxy(2,24);
-    console.putmsg(" Womp womp. Transfer section is not available. \1n\1c\1hTry \1b\1hG\1r\1ho\1y\1ho\1b\1hg\1g\1hl\1r\1he\1c?\1n".toMystText());
+    console.putmsg(mystText(" Womp womp. Transfer section is not available. \1n\1c\1hTry \1b\1hG\1r\1ho\1y\1ho\1b\1hg\1g\1hl\1r\1he\1c?\1n"));
     console.pause();
     return;
 }
@@ -52,11 +54,12 @@ function mainMenu() {
         //check to see if the user has changed command shell.
 		  if (thisShell.toUpperCase() != user.command_shell.toUpperCase()) 
             return;
+		
         bbs.node_action = NODE_MAIN;
         bbs.nodesync();
         bbs.menu(conf.fontcode); // reset font type
 
-		mystPrompt('Main');
+		mystPrompt('main');
 
         //options and commands to perform
         var key = console.getkey(K_NOECHO).toUpperCase();
@@ -76,7 +79,7 @@ function mainMenu() {
             case '.':
                 console.crlf();
                 if (user.compare_ars('SYSOP')) {
-                    console.print(" " + color.t_alert + 'Sysop Command:'+ RESETCOLOR + " ");
+                    console.print(" " + color.alert + 'Sysop Command:'+ RESETCOLOR + " ");
                     bbs.exec('*str_cmds ' + console.getstr(40));
                     break;
                 }
@@ -114,7 +117,7 @@ function mainMenu() {
 				console.pause();
                 break;
 			case 'M':
-				//console.print(color.t_alert + ">> Message Menu\1n")
+				//console.print(color.alert + ">> Message Menu\1n")
                 msgMenu();
                 break;
             case 'O': // LOGOFF
@@ -124,8 +127,9 @@ function mainMenu() {
                 bbs.exec('*rumors addrumor');
                 break;
             case 'W':
-                mystHeader('hdr-online');
-                bbs.list_nodes();
+				mystHeader('hdr-online');
+				bbs.list_nodes();
+				console.gotoxy(1,24);
 				console.pause();
                 break;
             case 'X':
@@ -236,7 +240,7 @@ function msgMenu() {
                 // SCAN FOR NEW MESSAGES
             case 'N':
                 // will use DDMesgReader if installed as Loadable module
-                console.print(color.t_alert + " New Message Scan \1n\r\n");
+                console.print(color.alert + " New Message Scan \1n\r\n");
 				bbs.menu("437");
                 bbs.scan_subs(SCAN_NEW);
 				bbs.menu(conf.fontcode);
@@ -265,7 +269,7 @@ function msgMenu() {
 			case 'S':
                 // will use DDMesgReader if installed as Loadable module
                 bbs.menu("437");
-                console.print("\r\n " + color.t_alert + "Scan for Messages Posted to You\r\n");
+                console.print("\r\n " + color.alert + "Scan for Messages Posted to You\r\n");
                 bbs.scan_subs(SCAN_TOYOU);
 				bbs.menu(conf.fontcode);
                 break;
@@ -426,7 +430,7 @@ function chatMenu() {
                 sleep(500);
                 console.putmsg(' ... \1n\r\n\r\n');
                 sleep(500);
-				console.putmsg(" " + color.t_alert + "they have been paged\1n\r\n")
+				console.putmsg(" " + color.alert + "they have been paged\1n\r\n")
                 break;
             case 'P':
                 bbs.private_chat();
@@ -511,7 +515,7 @@ function emailMenu() {
             case 'S':
                 bbs.node_action = NODE_SMAL;
                 bbs.nodesync();
-                console.print("\r\n " + color.t_alert + "E-mail (User name or number):\1n ");
+                console.print("\r\n " + color.alert + "E-mail (User name or number):\1n ");
                 str = console.getstr("", 40, K_UPRLWR, false);
                 if (str == null || str == "")
                     break;
@@ -595,7 +599,7 @@ function xferMenu() {
                 // SELECT GROUPS/SUBS
                 // FIND TEXT IN POSTS
             case 'D':
-                console.print("\r\n " + color.t_alert + "Download File(s)\1n\r\n");
+                console.print("\r\n " + color.alert + "Download File(s)\1n\r\n");
                 if(bbs.batch_dnload_total>0) {
                     if(console.yesno(bbs.text(DownloadBatchQ))) {
                         bbs.batch_download();
@@ -603,8 +607,9 @@ function xferMenu() {
                     }
                 }
                 break;
+				
 			case 'F':
-                console.print(color.t_alert + "Find Text in File Descriptions (no wildcards)\r\n");             
+                console.print(color.alert + "Find Text in File Descriptions (no wildcards)\r\n");             
                 bbs.scan_dirs(FL_FINDDESC);
                 break;
             case 'G':
@@ -619,7 +624,7 @@ function xferMenu() {
                 // SCAN FOR NEW MESSAGES
             case 'N':
                 // will use DDMesgReader if installed as Loadable module
-                console.print(color.t_alert + "New File Scan \1n\r\n");
+                console.print(color.alert + "New File Scan \1n\r\n");
                 bbs.scan_dirs(FL_ULTIME);
                 break;
             case 'O':
@@ -629,7 +634,7 @@ function xferMenu() {
                 mainMenu();
                 return;
 			case 'S':
-                console.print(color.t_alert + "Search Text in File Names. \1n\r\n");
+                console.print(color.alert + "Search Text in File Names. \1n\r\n");
                 bbs.scan_dirs(FL_NO_HDR);
                 break;
                 // SLASH AND COLON MENUS
@@ -660,7 +665,7 @@ function slashMenu(option) {
         break;
 	case '/': // FOR /F /N /R /J
 	    mystMenu('2slash');
-		console.putmsg(' ' + color.t_alert + 'Two-Slash Menu:\1n //');
+		console.putmsg(' ' + color.alert + 'Two-Slash Menu:\1n //');
 		//var keyword = console.getstr(maxlen=7).toUpperCase();
 		twoSlashMenu(console.getstr(maxlen=7,mode=K_NOCRLF).toUpperCase());
         break;
@@ -687,9 +692,9 @@ function slashMenu(option) {
         break;
     case 'N':
 		bbs.menu("437");
-		console.print(format(" %sNew Message Scan \1n\r\n",color.t_alert));
+		console.print(format(" %sNew Message Scan \1n\r\n",color.alert));
         bbs.scan_subs(SCAN_NEW, all = true);
-		console.print(format(" %sNew File Scan \1n\r\n",color.t_alert));
+		console.print(format(" %sNew File Scan \1n\r\n",color.alert));
 		bbs.scan_dirs(FL_ULTIME);
         bbs.menu(conf.fontcode);
         break;
@@ -762,8 +767,18 @@ function twoSlashMenu(option) {
         break;
 	case 'NEWS':
 		bbs.exec('?rss2'); // rss news
+        break;
+	case 'WHO':
+        mystHeader('hdr-online');
+        bbs.list_nodes();
+		console.gotoxy(1,24);
+		console.pause();
+        break;
+		case 'LAST':
+        bbs.exec('*myst_lastcallers.js');
+		console.gotoxy(1,24);
+		console.pause();
 		//		bbs.exec('?/sbbs/xtrn/bullshitnew/bullshit.js /sbbs/xtrn/bullshitnew/news.ini rss-entertainment'); // rss news
-
         break;
     default:
         alert('NOT VALID');

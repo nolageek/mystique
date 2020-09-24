@@ -1,23 +1,21 @@
 // Many thanks to tracker and ispyhumanfly for a lot of this code.
 load("sbbsdefs.js");
+//load("myst_language.js");
+//load("myst_settings.js");
+//load("myst_functions.js");
+load("myst_colors.js");	
 
-var color = [];
-                            // MENU STRING COLORS
-    color.t_user  = '\1h\1c'; // username in menus 
-    color.t_sym   = '\1h\1k'; // symbols color @; [ ]; ( );etc..
-    color.t_sym2  = '\1h\1c'; // symbol highlght (numbers in [1]; menu options [A]; etc..)
-    color.t_txt   = '\1h\1b'; // color for most text
-    color.t_txt2  = '\1n\1c'; // aux color for text; bold words; values; etc...
-    color.t_info  = color.t_txt; // color for info text
-	color.t_ques  = '\1h\1r'; // color for question prompts
 var conf = [];
 	conf.LastCallersNum = 6;
 
 if (file_exists('/sbbs/mods/myst_settings.js'))
-	load("myst_settings.js");
+
 
 if (file_exists('/sbbs/mods/myst_functions.js'))
-	load("myst_functions.js");
+
+
+if (file_exists('/sbbs/mods/myst_colors.js'))
+
 
 function lastCallers(num) {
 
@@ -105,7 +103,7 @@ function lastCallers(num) {
         var timelast = (u.stats.timeon_last_logon + "m");
         //how you want the information displayed via telnet...
 
-        var active = " " + color.t_txt2 + rpad(u.alias, 14) + color.t_txt + " " + rpad(u.location, 23) + color.t_user + " " + rpad(u.command_shell.toUpperCase(), 9) + "\1n\1c" + rpad(timeSince(u.stats.laston_date), 8) + color.t_txt + rpad(u.stats.timeon_last_logon + "m", 5) + color.t_sym + "[" + color.t_sym2 + activit_isnew + color.t_sym2 + activit_posted + activit_readmg + activit_feedback + activit_gfiles + activit_doors + activit_emails + activit_hungup + activit_fmk + color.t_sym + "] " + color.t_txt + rpad(totlogins, 5) + "\r\n";
+        var active = " " + color.bright + rpad(u.alias, 14) + color.normal + " " + rpad(u.location, 23) + color.bright + " " + rpad(u.command_shell.toUpperCase(), 9) + "\1n\1c" + rpad(timeSince(u.stats.laston_date), 8) + color.normal + rpad(u.stats.timeon_last_logon + "m", 5) + color.bright + "[" + color.bright + activit_isnew + color.bright + activit_posted + activit_readmg + activit_feedback + activit_gfiles + activit_doors + activit_emails + activit_hungup + activit_fmk + color.bright + "] " + color.normal + rpad(totlogins, 5) + "\r\n";
 
 
         //now create the desired output...
@@ -119,8 +117,8 @@ function askLastCallers(int) {
     var num = int;
     console.crlf();
     if (num == 'undefined' || num == null) {
-        console.putmsg(bracket('?') + color.t_ques + 'How many callers would you like to list? ' + color.t_txt2 + '9 Max.' + bracket(conf.LastCallersNum));
-        console.putmsg(color.t_sym + ' : ');
+        console.putmsg('[?]' + color.bright + 'How many callers would you like to list? ' + color.normal + '9 Max. [' + conf.LastCallersNum + "]");
+        console.putmsg(color.bright + ' : ');
         num = console.getnum(9, conf.LastCallersNum);
     }
     lastCallers(num);
