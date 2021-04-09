@@ -9,11 +9,7 @@ var conf = [];
 	conf.LastCallersNum = 6;
 
 if (file_exists('/sbbs/mods/myst_settings.js'))
-
-
 if (file_exists('/sbbs/mods/myst_functions.js'))
-
-
 if (file_exists('/sbbs/mods/myst_colors.js'))
 
 
@@ -60,7 +56,7 @@ function lastCallers(num) {
     bbs.menu(user.command_shell + '/hdr-last10');
     //create a loop to display the last few callers...
     for (var i = start, j = 0; i < laston_list.length; i++, j++) {
-        u.number = laston_list[i].number; //assign to user in list...
+           u.number = laston_list[i].number; //assign to user in list...
 
         //where you would like the data located...
         //console.ansi_gotox(3);
@@ -117,7 +113,7 @@ function askLastCallers(int) {
     var num = int;
     console.crlf();
     if (num == 'undefined' || num == null) {
-        console.putmsg('[?]' + color.bright + 'How many callers would you like to list? ' + color.normal + '9 Max. [' + conf.LastCallersNum + "]");
+        console.putmsg('\r\n' + color.dark + '> ' + color.bright + 'How many callers would you like to list? ' + color.normal + '9 Max. [' + conf.LastCallersNum + "]");
         console.putmsg(color.bright + ' : ');
         num = console.getnum(9, conf.LastCallersNum);
     }

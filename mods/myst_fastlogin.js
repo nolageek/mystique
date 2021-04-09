@@ -3,7 +3,7 @@ load("sbbsdefs.js"); // load helper functions
 load("ansislow.js");
 load("myst_colors.js")
 load("myst_functions.js");
-//load("myst_settings.js");
+load("myst_settings.js");
 //load("myst_colors.js");
 
 //var color = "";
@@ -16,7 +16,10 @@ load("myst_functions.js");
 //
 
 //console.gotoxy(52,9);
-	
+
+//mystMenu('437');
+//randomANSIslow("logon","4"); // synchronet logo
+
 mystMenu('FASTLOGIN');
 if (user.security.flags2&UFLAG_F) {
 	if(!console.yesno("\1h\1kFast Login:\1n\1w")){
@@ -43,23 +46,18 @@ var monthansi =  "month" + (n+1);
 //randomANSIslow("logon","month"+(n+1)); // cap shrill ansi
 
 bbs.menu('../logon/covid19');
+
 bbs.exec("?ctracker.js"); // covid tracker
 
 bbs.exec("?events.js");
 mystMenu('437');
-randomANSIslow("logon","1"); // cap shrill ansi
-
-mystMenu('437');
+randomANSIslow("logon","1"); // covid ansi
 randomANSIslow("logon","2"); // network promo
-
-mystMenu('437');
-randomANSIslow("logon","3"); // game promo
-
-mystMenu('437');
+randomANSIslow("logon","3"); // game/feature promo
 bbs.exec("*oneliners"); // not by MrO
-
-//mystMenu(conf.fontcode);	
 bbs.exec_xtrn("ONELIN3R"); // networked ones
+bbs.exec('*/sbbs/xtrn/fmk/fmk.js');
+mystMenu(conf.fontcode);	
 
 var n = new File("/sbbs/data/subs/notices.hash")
 var u = user.stats.laston_date

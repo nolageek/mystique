@@ -12,6 +12,7 @@ bbs.replace_text(94,color.normal + "Search all groups for new messages\1n");
 bbs.replace_text(95,color.normal + "Search all groups for un-read messages to you\1n");
 bbs.replace_text(96,color.bright + "Are you sure\1n");
 bbs.replace_text(119,"Log Off\1n");
+bbs.replace_text(142, warnBox + "\r\n\1n\1mPaging \1h%s #%u\1n\1m for private chat\r\n");
 bbs.replace_text(156,color.bright + "I'm sorry, did you forget something?\1n\r\n");
 bbs.replace_text(369,color.bright + "Does your terminal support IBM extended ASCII\1n");
 bbs.replace_text(338,"@CLS@@MENU:newuser@@GOTOXY:3,18@" + color.normal + "Enter your alias or full name\1n" + color.dark + ":\1n " + color.normal);
@@ -19,6 +20,8 @@ bbs.replace_text(370,"@GOTOXY:3,23@" + color.normal + "You can't use that name (
 bbs.replace_text(346,"@GOTOXY:3,19@" + color.normal + "Enter your location, afiliation, or public note\1n" + color.dark + ":\1n " + color.normal);
 bbs.replace_text(345,"@GOTOXY:3,20@" + color.normal + "Enter your birthday (@DATEFMT@)\1n" + color.dark + ":\1n " + color.normal);
 bbs.replace_text(500,"@GOTOXY:3,21@" + color.normal + "Network mail address" + color.bright + " (Example: user@domain)" + color.dark + ":\1n " + "\1n\r\n" + color.info + "  This may be used for password recovery\1n" + color.bright + "\r\n  ");
+bbs.replace_text(539,"\r\n\r\n" + warnBox + color.normal + " Paging " + color.normal + " %s ..." );
+
 bbs.replace_text(499,color.bright + "Forward personal e-mail to network mail address\1n");
 bbs.replace_text(350,color.bright + "Is the above information correct\1n");
 bbs.replace_text(331,color.bright + " Enter a different password\1n");
@@ -48,6 +51,40 @@ bbs.replace_text(563,color.dark + "[\1n" + mystText(color.normal + "pause\1n" + 
 bbs.replace_text(497,quesBox + color.normal + "How many rows on your monitor [\1wAuto Detect\1y]= ");
 bbs.replace_text(497,quesBox + color.normal +"Select \1h%s\1n\1g:\1n\r\n\r\n" );
 bbs.replace_text(570,"\r\n " + color.bright + user.normal + color.dark + '@\1n' + color.normal + "QWK\1n" + color.dark + ": \1n");
+
+bbs.replace_text(621,"\r\n" + quesBox 
+					+ color.dark + " Would you like to scan within:\r\n"
+					+ color.dark + " Current "
+					+ bracket("G")
+					+ color.normal + "roup: " 
+					+ m_color.WHITE + "@GRP@\r\n"
+					+ color.dark + " Current " 
+					+ bracket("S")
+					+ color.normal + "ub-board: " 
+					+ m_color.WHITE + "@SUB@\r\n"
+					+ color.dark + "      or " 
+					+ bracket("A")
+					+ color.normal + "ll\r\n       "
+					+ bracket("ENTER")
+					+ color.dark + " Quits"
+					+ color.normal + ": ");					
+bbs.replace_text(622,"\r\n" + quesBox 
+					+ color.dark + " Would you like to scan within:\r\n"
+					+ color.dark + " Current " 
+					+ bracket("L")
+					+ color.normal + "ibrary  : " 
+					+ m_color.WHITE + "@LIBL@\r\n"
+					+ color.dark + " Current "
+					+ bracket("D")
+					+ color.normal + "irectory: " 
+					+ m_color.WHITE + "@DIRL@\r\n"
+					+ color.dark + "      or " 
+					+ bracket("A")
+					+ color.normal + "ll\r\n       "
+					+ bracket("ENTER")
+					+ color.dark + " Quits"
+					+ color.normal + ": ");
+					
 bbs.replace_text(660,"@EXEC:DDFLIST@");
 bbs.replace_text(661,"@EXEC:DDFL_HDR@");
 bbs.replace_text(811,quesBox + mystText(color.normal + " HIT your \1n" + color.dark + "BACKSPACE\1n" + color.normal +" or \1n" + color.dark + "DELETE-LEFT\1n" + color.normal + " key:") + "\1n "); 

@@ -18,21 +18,22 @@ if (!bbs.mods.vanguard.assault.xtrn_sec) bbs.mods.vanguard.assault.xtrn_sec = {}
 /* End includes **************************************************************/
 
 /* Begin selectListSettings **************************************************/
-bbs.mods.vanguard.assault.xtrn_sec.select_options = {};
-bbs.mods.vanguard.assault.xtrn_sec.select_options.x1 = 51; // left col
-bbs.mods.vanguard.assault.xtrn_sec.select_options.y1 = 7; // top row
-bbs.mods.vanguard.assault.xtrn_sec.select_options.x2 = 79; //right col
-bbs.mods.vanguard.assault.xtrn_sec.select_options.y2 = 22;// last row if using a js shell use  .. load("mods.vanguard.xtrn_sec.js");
+select_options = {};
+select_options.x1 = 49; // left col
+select_options.y1 = 9; // top row
+select_options.x2 = 79; //right col
+select_options.y2 = 22;// last row if using a js shell use  .. load("mods.vanguard.xtrn_sec.js");
+select_options.selectedText = WHITE;
 /* End selectListSettings ****************************************************/
 
 /* Begin Initialize **********************************************************/
-bbs.mods.vanguard.assault.xtrn_sec.options = {}
-bbs.mods.vanguard.assault.xtrn_sec.options.mainExit = false;
+options = {}
+options.mainExit = false;
 /* End Initialize ************************************************************/
 
 // Method to load the ansi display.
-bbs.mods.vanguard.assault.xtrn_sec.loadAnsi = function() {
-	bbs.mods.vanguard.assault.xtrn_sec.options.reloadAnsi = false;
+loadAnsi = function() {
+	options.reloadAnsi = false;
 	console.line_counter = 0;
 	console.clear();
 		bbs.menu(conf.fontcode);
@@ -42,7 +43,7 @@ bbs.mods.vanguard.assault.xtrn_sec.loadAnsi = function() {
 }
 
 // handle raised/control characters
-bbs.mods.vanguard.assault.xtrn_sec.ctrl_handler = function(k) {
+ctrl_handler = function(k) {
 	//display awaiting messages
 	if (k == "" && ((system.node_list[bbs.node_num-1].misc&NODE_NMSG) != 0)||((system.node_list[bbs.node_num-1].misc&NODE_MSGW) != 0)) {
 		console.line_counter = 0;
@@ -57,9 +58,9 @@ bbs.mods.vanguard.assault.xtrn_sec.ctrl_handler = function(k) {
 		bbs.sys_status &= ~SS_ABORT;
 		while (console.inkey() != "") {/*do nothing - clear buffer*/};
 		console.pause();
-		bbs.mods.vanguard.assault.xtrn_sec.options.reloadAnsi = true;
+		options.reloadAnsi = true;
 		console.putmsg(k.charCodeAt(0));
-	} else if (k.charCodeAt(0) < 82)  {
+	} else if (k.charCodeAt(0) < 182)  {
 		console.line_counter = 0;
 		console.clear();
 		console.line_counter = 0;
@@ -72,7 +73,7 @@ bbs.mods.vanguard.assault.xtrn_sec.ctrl_handler = function(k) {
 				case 27: //escape
 				case 113: //q
 				case 81: //Q
-					bbs.mods.vanguard.assault.xtrn_sec.options.mainExit = true;
+					options.mainExit = true;
 					break;
 				case 11: //ctrl-k - hotkey listing
 				case 20: //ctrl-t - time listing
@@ -88,19 +89,19 @@ bbs.mods.vanguard.assault.xtrn_sec.ctrl_handler = function(k) {
 
 		
 		
-		bbs.mods.vanguard.assault.xtrn_sec.options.reloadAnsi = true;
+		options.reloadAnsi = true;
 	} 	
 }
 
 //returns a sub selection
-bbs.mods.vanguard.assault.xtrn_sec.runProgram = function(current_group) {
+runProgram = function(current_group) {
 	var iCount = 0;
 	var iCurrent = 0;
 	var options = new Array();
 	var _group = xtrn_area.sec_list[current_group]
 	var x;
 	var pref = "";
-	options[""] = "<--(back)";
+	options[""] = color.dark + "<--[" + color.bright + "BACK" + color.dark + "]";
 	
 	//populate list based on _group
 	if (_group) {
@@ -125,26 +126,26 @@ bbs.mods.vanguard.assault.xtrn_sec.runProgram = function(current_group) {
 		}
 	}
 	
-	var sl = new bbs.mods.vanguard.selectList(options,bbs.mods.vanguard.assault.xtrn_sec.select_options.x1,bbs.mods.vanguard.assault.xtrn_sec.select_options.y1+3,bbs.mods.vanguard.assault.xtrn_sec.select_options.x2,bbs.mods.vanguard.assault.xtrn_sec.select_options.y2);
+	var sl = new bbs.mods.vanguard.selectList(options,select_options.x1,select_options.y1+3,select_options.x2,select_options.y2);
 	sl.padText = true;
 	sl.current = 0;
 	
-	bbs.mods.vanguard.assault.xtrn_sec.options.reloadAnsi = true;
+	options.reloadAnsi = true;
 
-	while (bbs.online && !bbs.mods.vanguard.assault.xtrn_sec.options.mainExit) {
-		if (bbs.mods.vanguard.assault.xtrn_sec.options.reloadAnsi == true) {
-			bbs.mods.vanguard.assault.xtrn_sec.loadAnsi();
-			console.gotoxy(bbs.mods.vanguard.assault.xtrn_sec.select_options.x1,bbs.mods.vanguard.assault.xtrn_sec.select_options.y1);
-			print("\1n\1"+"7\1k" + ("SECTION: \1b" + _group.name + sl.padding).substring(0,bbs.mods.vanguard.assault.xtrn_sec.select_options.x2 - bbs.mods.vanguard.assault.xtrn_sec.select_options.x1+2));
-			console.gotoxy(bbs.mods.vanguard.assault.xtrn_sec.select_options.x1,bbs.mods.vanguard.assault.xtrn_sec.select_options.y1+1);
-                        print("\1n\1"+"7\1k" + ("Note:Hit ESC to Exit" + sl.padding).substring(0,bbs.mods.vanguard.assault.xtrn_sec.select_options.x2 - bbs.mods.vanguard.assault.xtrn_sec.select_options.x1));
-			console.gotoxy(bbs.mods.vanguard.assault.xtrn_sec.select_options.x1,bbs.mods.vanguard.assault.xtrn_sec.select_options.y1+2);
-			print("\1n" + sl.padding.replace(/ /g,"-").substring(0,bbs.mods.vanguard.assault.xtrn_sec.select_options.x2 - bbs.mods.vanguard.assault.xtrn_sec.select_options.x1));
+	while (bbs.online && !options.mainExit) {
+		if (options.reloadAnsi == true) {
+			loadAnsi();
+			console.gotoxy(select_options.x1,select_options.y1);
+			print("\1n" + color.bright + ("SECTION: " + color.select + _group.name + sl.padding).substring(0,select_options.x2 - select_options.x1+6));
+			console.gotoxy(select_options.x1,select_options.y1+1);
+            print("\1n" + color.normal + ("Note:Hit ESC to Exit" + sl.padding).substring(0,select_options.x2 - select_options.x1));
+			console.gotoxy(select_options.x1,select_options.y1+2);
+			print("\1n" + sl.padding.replace(/ /g,"-").substring(0,select_options.x2 - select_options.x1));
 		}
 		
 		var k = sl.choose();
 		if (sl.raised != null) {
-			bbs.mods.vanguard.assault.xtrn_sec.ctrl_handler(sl.raised);
+			ctrl_handler(sl.raised);
 		} else if (k == "") {
 			return;
 		} else {
@@ -155,16 +156,16 @@ bbs.mods.vanguard.assault.xtrn_sec.runProgram = function(current_group) {
 
 			if (console.line_count)
 				console.pause();
-			bbs.mods.vanguard.assault.xtrn_sec.options.reloadAnsi = true;
+			options.reloadAnsi = true;
 		}
 	}
 }
 
-bbs.mods.vanguard.assault.xtrn_sec.getgrp = function(current_group) {
+getgrp = function(current_group) {
 	var iCount = 0;
 	var iCurrent = 0;
 	var options = new Array();
-	options[""] = "<--(back)";
+	options[""] = color.dark + "[" + color.bright + "QUIT" + color.dark + "]";;
 	var x;
 	for (x in xtrn_area.sec_list) {
 		if (user.compare_ars(xtrn_area.sec_list[x])) {
@@ -182,35 +183,38 @@ bbs.mods.vanguard.assault.xtrn_sec.getgrp = function(current_group) {
 		return "";
 	}
 			
-	var sl = new bbs.mods.vanguard.selectList(options,bbs.mods.vanguard.assault.xtrn_sec.select_options.x1,bbs.mods.vanguard.assault.xtrn_sec.select_options.y1+2,bbs.mods.vanguard.assault.xtrn_sec.select_options.x2,bbs.mods.vanguard.assault.xtrn_sec.select_options.y2);
+	var sl = new bbs.mods.vanguard.selectList(options,select_options.x1,select_options.y1+3,select_options.x2,select_options.y2);
 	sl.current = iCurrent;
 	sl.padText = true;
 	sl.showKeys = false;
 	
-	bbs.mods.vanguard.assault.xtrn_sec.options.reloadAnsi = true;
-	while (bbs.online && !bbs.mods.vanguard.assault.xtrn_sec.options.mainExit) {
-		if (bbs.mods.vanguard.assault.xtrn_sec.options.reloadAnsi == true) {
-			bbs.mods.vanguard.assault.xtrn_sec.loadAnsi();
-			console.gotoxy(bbs.mods.vanguard.assault.xtrn_sec.select_options.x1,bbs.mods.vanguard.assault.xtrn_sec.select_options.y1);
-			print("\1n\1"+"7\1k" + ("Select a section."+sl.padding).substring(0,bbs.mods.vanguard.assault.xtrn_sec.select_options.x2 - bbs.mods.vanguard.assault.xtrn_sec.select_options.x1));
-			console.gotoxy(bbs.mods.vanguard.assault.xtrn_sec.select_options.x1,bbs.mods.vanguard.assault.xtrn_sec.select_options.y1+1);
-			print("\1n" + sl.padding.replace(/ /g,"-").substring(0,bbs.mods.vanguard.assault.xtrn_sec.select_options.x2 - bbs.mods.vanguard.assault.xtrn_sec.select_options.x1));
+	options.reloadAnsi = true;
+	while (bbs.online && !options.mainExit) {
+		if (options.reloadAnsi == true) {
+			loadAnsi();
+			console.gotoxy(select_options.x1,select_options.y1);
+			print("\1n" + color.bright + ("Select a section."+sl.padding).substring(0,select_options.x2 - select_options.x1));
+			console.gotoxy(select_options.x1,select_options.y1+1);
+            print("\1n" + color.normal + ("Note: Hit ESC to Exit" + sl.padding).substring(0,select_options.x2 - select_options.x1));
+			console.gotoxy(select_options.x1,select_options.y1+2);
+			print("\1n" + sl.padding.replace(/ /g,"-").substring(0,select_options.x2 - select_options.x1));
 		}
 
 		var k = sl.choose();
 		if (sl.raised != null)
-			bbs.mods.vanguard.assault.xtrn_sec.ctrl_handler(sl.raised);
+			ctrl_handler(sl.raised);
 		else if (k == "")
 			return "";
 		else
+
 			return k;
 	}
-	bbs.mods.vanguard.assault.xtrn_sec.options.mainExit = false;
+	options.mainExit = false;
 	return "";
 }
 
 //msg_sec starting point
-bbs.mods.vanguard.assault.xtrn_sec.main = function() {
+main = function() {
 	try {
 		system.node_list[bbs.node_num-1].action = NODE_XTRN;
 		
@@ -221,19 +225,19 @@ bbs.mods.vanguard.assault.xtrn_sec.main = function() {
 		console.status &= ~CON_RAW_IN; // no raw input
 		var exit_menu = false;
 
-		bbs.mods.vanguard.assault.xtrn_sec.options.mainExit = false;
-		bbs.mods.vanguard.assault.xtrn_sec.options.reloadAnsi = true;
+		options.mainExit = false;
+		options.reloadAnsi = true;
 		var current_group = "";
-		while (bbs.online && !bbs.mods.vanguard.assault.xtrn_sec.options.mainExit) {
-			var k = bbs.mods.vanguard.assault.xtrn_sec.getgrp(current_group);
+		while (bbs.online && !options.mainExit) {
+			var k = getgrp(current_group);
 			if (!k || k == "") {
-				bbs.mods.vanguard.assault.xtrn_sec.options.mainExit = true;
+				options.mainExit = true;
 			} else if (xtrn_area.sec_list[k]) {
 				print("\1n ");
 				current_group = k;
-				bbs.mods.vanguard.assault.xtrn_sec.runProgram(k);
-				bbs.mods.vanguard.assault.xtrn_sec.options.mainExit = false; //only drop from runProgram to grouplist
-				bbs.mods.vanguard.assault.xtrn_sec.options.reloadAnsi = true;
+				runProgram(k);
+				options.mainExit = false; //only drop from runProgram to grouplist
+				options.reloadAnsi = true;
 			}
 		}
 		
@@ -245,13 +249,13 @@ bbs.mods.vanguard.assault.xtrn_sec.main = function() {
 	console.clear();
 }
 if (user.settings & USER_ANSI)
-	bbs.mods.vanguard.assault.xtrn_sec.main(); //ansi
+	main(); //ansi
 else
 	bbs.xtrn_sec(); //not ansi
 
 /* Begin trace/debug settings ************************************************/
-if (bbs.mods.vanguard.assault.xtrn_sec.debug) {
-	if (bbs.mods.vanguard.assault.xtrn_sec.firstTrace) {
+if (debug) {
+	if (firstTrace) {
 		//bbs.trace.close();
 		//bbs.trace.enabled = false;
 	}

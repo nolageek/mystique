@@ -1,16 +1,16 @@
 load("sbbsdefs.js");
 
 	c_txt 		= '\1h\1b'; 
-	c_txt2 	= '\1h\1m';
+	c_txt2 		= '\1h\1m';
 	c_sym 		= '\1h\1k';
 	c_sym2 		= '\1h\1w';
 	c_success	= '\1f\1g';
 	
 var conf = [];
-	conf.rumorsNum = 6;
+	conf.rumorsNum = 10;
 
 var param = argv[0];
-var rumorFile 	= system.mods_dir + '\\rumor.txt';
+var rumorFile 	= system.mods_dir + '/rumor.txt';
 
 if (param == 'addrumor') {
 	addRumor();
@@ -33,10 +33,9 @@ function showRumor() {
 
 function addRumor() {
 	console.clear();
-	findHeader('rumor-h');
+	findHeader('rumors');
 	console.putmsg(c_txt);
 	console.printtail(rumorFile,conf.rumorsNum);
-	findHeader('rumor-f');
 	console.gotoxy(2,22);
 
 	console.gotoxy(2,23);
@@ -145,14 +144,16 @@ function customizeRumor(rumor) {
 
 function findHeader(file) {
     // checks current command_shell dir for file name, if doesn't exist, use mod dir. assign to ansiDir
-    var ansiDir = user.command_shell + '\\';
+    var ansiDir = system.text_dir + '/menu/' + user.command_shell + '/';
     if (!file_exists(ansiDir + file + '.ans') && !file_exists(ansiDir + file + '.asc')) {
-        var ansiDir = 'rumors\\'
+        var ansiDir = 'rumors/'
     }
 
    // var random_list = directory(ansiDir + file + "*.*") //returns an array of filenames from ansiDir
     //if (random_list.length) { //if there are files in the directory
-        bbs.menu(ansiDir + file);
+			//console.putmsg(ansiDir + file);
+        
+		bbs.menu(ansiDir + file);
 		//console.putmsg(ansiDir + file)
         // displays random file from array.
 	//	}

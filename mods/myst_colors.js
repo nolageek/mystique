@@ -1,53 +1,53 @@
 load("sbbsdefs.js");
 
-var   BLACK			='\1n\1k';			/* dark colors (HIGH bit unset) */
-var   BLUE			='\1n\1c';
-var   GREEN			='\1n\1g';
-var   CYAN			='\1n\1c';
-var   RED			='\1n\1r';
-var   MAGENTA		='\1n\1m';
-var   BROWN			='\1n\1y';
-var   LIGHTGRAY		='\1n\1w';
-var   DARKGRAY		='\1h\1k';			/* light colors (HIGH bit set) */
-var   LIGHTBLUE		='\1h\1b';
-var   LIGHTGREEN	='\1h\1g';
-var   LIGHTCYAN		='\1h\1c';
-var   LIGHTRED		='\1h\1r';
-var   LIGHTMAGENTA	='\1h\1m';
-var   YELLOW		='\1h\1y';
-var   WHITE			='\1h\1w';
+var m_color = [];
+    m_color.BLACK         = '\1n\1k';            /* dark colors (HIGH bit unset) */
+    m_color.BLUE          = '\1n\1c';
+    m_color.GREEN         = '\1n\1g';
+    m_color.CYAN          = '\1n\1c';
+    m_color.RED           = '\1n\1r';
+    m_color.MAGENTA       = '\1n\1m';
+    m_color.BROWN         = '\1n\1y';
+    m_color.LIGHTGRAY     = '\1n\1w';
+    m_color.DARKGRAY      = '\1h\1k';            /* light colors (HIGH bit set) */
+    m_color.LIGHTBLUE     = '\1h\1b';
+    m_color.LIGHTGREEN    = '\1h\1g';
+    m_color.LIGHTCYAN     = '\1h\1c';
+    m_color.LIGHTRED      = '\1h\1r';
+    m_color.LIGHTMAGENTA  = '\1h\1m';
+    m_color.YELLOW        = '\1h\1y';
+    m_color.WHITE         = '\1h\1w';
 
-var   BG_BLACK		='\0010';
-var   BG_BLUE		='\0014';
-var   BG_GREEN		='\0012';
-var   BG_CYAN		='\0016';
-var   BG_RED		='\0011';
-var   BG_MAGENTA	='\0015';
-var   BG_BROWN		='\0013';
-var   BG_LIGHTGRAY	='\0017';
-
-var   RESETCOLOR	=BG_BLACK+LIGHTGRAY;
+    m_color.BG_BLACK      = '\0010';
+    m_color.BG_BLUE       = '\0014';
+    m_color.BG_GREEN      = '\0012';
+    m_color.BG_CYAN       = '\0016';
+    m_color.BG_RED        = '\0011';
+    m_color.BG_MAGENTA    = '\0015';
+    m_color.BG_BROWN      = '\0013';
+    m_color.BG_LIGHTGRAY  = '\0017';
+    m_color.RESETCOLOR	  =	m_color.BG_BLACK + m_color.LIGHTGRAY;
 
 var colors = {
-	'fg' : WHITE,      // Non-highlighted item foreground
-	'bg' : BG_BLACK,   // Non-highlighted item background
-	'lfg' : WHITE,     // Highlighted item foreground
-	'lbg' : BG_RED,   // Highlighted item background
-	'sfg' : WHITE,     // Path/status-bar foreground
-	'sbg' : BG_CYAN,   // Path/status-bar background
-	'hfg' : LIGHTGRAY, // Header foreground
-	'hbg' : BG_BLACK   // Header background
+	'fg'  : m_color.WHITE,      // Non-highlighted item foreground
+	'bg'  : m_color.BG_BLACK,   // Non-highlighted item background
+	'lfg' : m_color.WHITE,     // Highlighted item foreground
+	'lbg' : m_color.BG_RED,   // Highlighted item background
+	'sfg' : m_color.WHITE,     // Path/status-bar foreground
+	'sbg' : m_color.BG_CYAN,   // Path/status-bar background
+	'hfg' : m_color.LIGHTGRAY, // Header foreground
+	'hbg' : m_color.BG_BLACK   // Header background
 };
 
 var color = [];
-	color.dark		= 	DARKGRAY;
-	color.normal	= 	LIGHTGRAY;
-	color.bright	=	WHITE;
-	color.reset		=	RESETCOLOR;
-	color.alert		=	BG_RED+WHITE;
-	color.yes		=	BG_GREEN+WHITE;
-	color.info		=	BG_LIGHTGRAY+color.bright;
-	color.select	=	BG_BLUE+color.bright;
+	color.dark		= 	m_color.DARKGRAY;
+	color.normal	= 	m_color.LIGHTGRAY;
+	color.bright	=	m_color.WHITE;
+	color.reset		=	m_color.RESETCOLOR;
+	color.alert		=	m_color.BG_RED+	m_color.WHITE;
+	color.yes		=	m_color.BG_GREEN+	m_color.WHITE;
+	color.info		=	m_color.BG_LIGHTGRAY+color.bright;
+	color.select	=	m_color.BG_BLUE+color.bright;
 
 
 

@@ -1,4 +1,7 @@
 load("sbbsdefs.js");
+load('myst_functions.js');
+load('myst_settings.js');
+load('myst_colors.js');
 
 // creating some color codes so my eyes dont bleed.
 	c_txt 		= '\1h\1b'; 
@@ -7,20 +10,14 @@ load("sbbsdefs.js");
 	c_sym2 		= '\1h\1w';
 	c_success	= '\1f\1g';
 	
-var onelinerFile 	= system.mods_dir + '\\oneliners.txt';
+var onelinerFile 	= system.mods_dir + '/oneliners.txt';
 
 
 
 
 function addoneliner() {
-	console.clear();
-		(bbs.menu(user.command_shell + "\\oneliners"));
-	//console.putmsg(" \0015\1h\1wLocal Oneliners                                                               \r\n");
-	//console.putmsg("  \1h\1k[\1mWho said shit: \1k] \1h\1cThe Shit They Said:");
-	//console.putmsg(c_txt);
-	console.printtail(onelinerFile,13);
 	console.gotoxy(2,23);
-	console.putmsg(c_txt + 'Enter a new \0014local oneliner\1n ' + c_sym + '[' + c_sym2 + 'RET' + c_sym + '] ' + c_txt + 'quits:\1n');
+	console.putmsg(c_txt + 'Enter a new \0014oneliner\1n ' + c_sym + '[' + c_sym2 + 'RET' + c_sym + '] ' + c_txt + 'quits:\1n');
 	console.gotoxy(2,24);
 	console.putmsg('\1h\1w: \1n\1w');
 	var oneliner = console.getstr("", 59);
@@ -52,5 +49,13 @@ function rpad(str, length, padString) {
         
     return str;
 }
-
+	
+	console.clear();
+	mystHeaderFooter('header','oneliners');
+	//console.putmsg(" \0015\1h\1wLocal Oneliners                                                               \r\n");
+	//console.putmsg("  \1h\1k[\1mWho said shit: \1k] \1h\1cThe Shit They Said:");
+	//console.putmsg(c_txt);
+	console.printtail(onelinerFile,12);
+	console.gotoxy(2,23);
+if(!console.noyes('\1h\1kEnter new Oneliner'))
 addoneliner();

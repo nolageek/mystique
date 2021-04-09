@@ -10,7 +10,7 @@ function showRumor() {
 	var all = f.readAll();
 	f.close();
 	var rumor = all[Math.floor(Math.random()*all.length)];
-	console.putmsg('  \1h\1brumor:\1n\1w [' + rpad(rumor,75) + '\1n\1w]');
+	console.putmsg(' \1h\1brumor:\1n\1w [' + rpad(rumor,75) + '\1n\1w]');
 }
 
 showRumor();
