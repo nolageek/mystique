@@ -1,6 +1,13 @@
+Mystique is Dead, long live Ditto.
+
+More information to come soon.
+
+
+
+
 Mystique Synchronet 3.17+ Command Shell
 
-This is still very much in development. You can see it in use on my BBS, capitolshrill.com.
+This is no longer in development. 
 
 I'm writing this synchronet shell since I couldn't find a simple one that was written in js - they're mostly in BAJA and that prevented a lot of what I wanted to do. I'm pulling a lot of inspiration from various other BBS software.
 
